@@ -1,0 +1,534 @@
+
+# title: "Seahorse_Data_Processing_bluk"
+# author: "Gabriel Sturm"
+# date: "10/20/2020"
+# output: CSV and JPEGs
+  
+###### Load Seahorse data
+### Using the Seahorse_Data_Sheet.xlsm copy and paste the Normalized Data from raw data excel output file in csv file
+### copy and paste the plate design with removed wells into Seahorse_Data_Sheet.xlsm - this will allow the script to remove those wells, hover over the pasted plate design and run the macro 'ListColors'. This will update the 'Removed' wells column. 
+### save the Seahorse_Data_Sheet.xlsm file as a csv
+
+
+dataDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/DATA/Data Seahorse/MiSBIE/All_Data_Files"
+resultsDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/DATA/Data Seahorse/MiSBIE/All_Data_Files/Processed_Data/"
+setwd(dataDir)
+dir()
+ProcessSeahorseData <- function(filename, file, Date_of_experiment, Experiment_name, Injection_Strategy) {
+  print(Experiment_name)
+  Seahorse_data <- data.frame(file)
+  head(Seahorse_data)
+  
+  Timepoints <- as.numeric(max(Seahorse_data$Measurement))
+  #print("Number of Timepoints:")
+  Timepoints
+  
+  ## Organize data by injection strategy
+  ### Correct the number of each injection count below
+  if(Experiment_name == "Mi003") {
+    Injection_Strategy <- c(3,3,3,3,1)
+  }
+
+  nBaselineMeasurements <- Injection_Strategy[1]
+  nExtraMeasurements <- Injection_Strategy[2]
+  nOligoMeasurements <- Injection_Strategy[3]
+  nFCCPMeasurements <- Injection_Strategy[4]
+  nRaMeasurements <- Injection_Strategy[5]
+  
+  
+  sumMeasurements <- nBaselineMeasurements + nExtraMeasurements + nOligoMeasurements + nFCCPMeasurements + nRaMeasurements
+  #print("Test if timepoints match injection stategy:")
+  identical(Timepoints, sumMeasurements)
+  
+  
+  start <-1
+  end <- nBaselineMeasurements
+  vBaselineMeasurements <- seq(from = start, to = end, by = 1)
+  vBaselineMeasurements
+  start <- end + 1
+  end <- start + nExtraMeasurements - 1
+  vExtraMeasurements <- 0
+  if(nExtraMeasurements > 0) {
+    vExtraMeasurements <- seq(from = start, to = end, by = 1)
+  }
+  vExtraMeasurements
+  start <- end + 1
+  end <- start + nOligoMeasurements - 1
+  vOligoMeasurements <- 0
+  if(nOligoMeasurements > 0) {
+    vOligoMeasurements <- seq(from = start, to = end, by = 1)
+  }
+  vOligoMeasurements
+  start <- end + 1
+  end <- start + nFCCPMeasurements - 1
+  vFCCPMeasurements <- 0
+  if(nFCCPMeasurements > 0) {
+    vFCCPMeasurements <- seq(from = start, to = end, by = 1)
+  }
+  vFCCPMeasurements
+  start <- end + 1
+  end <- start + nRaMeasurements - 1
+  vRaMeasurements <- 0
+  if(nRaMeasurements > 0) {
+    vRaMeasurements <- seq(from = start, to = end, by = 1)
+  }
+  vRaMeasurements
+  
+  ## Organize data by plate design
+  Seahorse_data <- Seahorse_data[Seahorse_data$Group != "Background",]
+  Groups <- as.character(unique(Seahorse_data$Group))
+  #print("Groups on plate:")
+  Groups
+  nGroups <- length(Groups)
+  #print("Number of Groups:")
+  nGroups
+  
+  ### Remove Data that was excluded due to well failure
+  Seahorse_data <- Seahorse_data[Seahorse_data$Removed != TRUE,]
+  Seahorse_data[1:6]
+  
+  
+  
+  ## Calculate MitoStress Test Parameters
+  
+  CV_cutoff <- 50
+  
+  ### Calculate Baseline Respiration
+  Baseline_Respiration <- matrix(nrow=nGroups,ncol=1)
+  colnames(Baseline_Respiration) <- "Baseline_Respiration"
+  rownames(Baseline_Respiration) <- Groups
+  baseline_data <- Seahorse_data[Seahorse_data$Measurement %in% tail(vBaselineMeasurements,1),]
+  for(i in 1:nGroups) {
+    group <- Groups[i]
+    #print(group)
+    group_basal_data <- baseline_data[baseline_data$Group == group,]$OCR
+    Baseline_Respiration[i,] <- mean(group_basal_data)
+    CV <- sd(group_basal_data) / mean(group_basal_data) * 100
+    # if(CV > CV_cutoff) {
+    #   print(paste0("Warning: ", "Baseline_Respiration of ", group, " has CV ", round(CV,0), "%"))
+    # }
+  }
+  
+  ### Calculate Baseline Respiration after extra injection
+  if(nExtraMeasurements > 0) {
+    Baseline_Respiration_after_injection <- matrix(nrow=nGroups,ncol=1)
+    colnames(Baseline_Respiration_after_injection) <- "Baseline_Respiration_after_injection"
+    rownames(Baseline_Respiration_after_injection) <- Groups
+    baseline_data <- Seahorse_data[Seahorse_data$Measurement %in% tail(vExtraMeasurements,1),]
+    for(i in 1:nGroups) {
+      group <- Groups[i]
+      #print(group)
+      group_basal_data <- baseline_data[baseline_data$Group == group,]$OCR
+      Baseline_Respiration_after_injection[i,] <- mean(group_basal_data)
+      CV <- sd(group_basal_data) / mean(group_basal_data) * 100
+      # if(CV > CV_cutoff) {
+      #   print(paste0("Warning: ", "Baseline_Respiration_after_injection of ", group, " has CV ", round(CV,0), "%"))
+      # }
+    }
+  }
+  
+  
+  
+  
+  ### Calculate Non Mitochondrial Respiration
+  NonMito_Respiration <- matrix(nrow=nGroups,ncol=1)
+  colnames(NonMito_Respiration) <- "NonMitochondrial_Respiration"
+  rownames(NonMito_Respiration) <- Groups
+  ra_data <- Seahorse_data[Seahorse_data$Measurement %in% vRaMeasurements,]
+  for(i in 1:nGroups) {
+    group <- Groups[i]
+    # Select the min measurement timepoint for each cell line
+    group_RA_data <- ra_data[ra_data$Group == group,]
+    min_measurement_value <- 10000
+    min_measurement <- 10000
+    for(j in vRaMeasurements[1]:tail(vRaMeasurements,1)) {
+      mean_measurement <- mean(ra_data[ra_data$Measurement == j,]$OCR)
+      if(mean_measurement < min_measurement_value) {
+        min_measurement_value <- mean_measurement
+        min_measurement <- j
+      }
+    }
+    group_RA_data <- group_RA_data[group_RA_data$Measurement == min_measurement,]$OCR
+    NonMito_Respiration[i,] <- mean(group_RA_data)
+    CV <- sd(group_RA_data) / mean(group_RA_data) * 100
+    # if(CV > CV_cutoff) {
+    #   print(paste0("Warning: ", "NonMito_Respiration of ", group, " has CV ", round(CV,0), "%"))
+    # }
+  }
+  
+  ### Calculate Basal Respiration
+  Basal_Respiration <- matrix(nrow=nGroups,ncol=1)
+  Basal_Respiration <- Baseline_Respiration - NonMito_Respiration
+  colnames(Basal_Respiration) <- "Basal_Respiration"
+  rownames(Basal_Respiration) <- Groups
+  
+  ### Calculate Basal Respiration after injection
+  if(nExtraMeasurements > 0) {
+    Basal_Respiration_after_injection <- matrix(nrow=nGroups,ncol=1)
+    Basal_Respiration_after_injection <- Baseline_Respiration_after_injection - NonMito_Respiration
+    colnames(Basal_Respiration_after_injection) <- "Basal_Respiration_after_injection"
+    rownames(Basal_Respiration_after_injection) <- Groups
+  }
+  
+  ### Calculate %-loss in basal from injection
+  if(nExtraMeasurements > 0) {
+    Basal_Injection_Loss <- (Basal_Respiration_after_injection - Basal_Respiration) / Basal_Respiration
+    Baseline_Respiration <- Baseline_Respiration_after_injection
+    Basal_Respiration <- Basal_Respiration_after_injection
+  }
+  
+ 
+  
+  ### Calculate Max Respiration
+  Max_Respiration <- matrix(nrow=nGroups,ncol=1)
+  colnames(Max_Respiration) <- "Max_Respiration"
+  rownames(Max_Respiration) <- Groups
+  max_data <- Seahorse_data[Seahorse_data$Measurement %in% vFCCPMeasurements,]
+  for(i in 1:nGroups) {
+    group <- Groups[i]
+    # Select the max measurement timepoint for each cell line
+    group_max_data <- max_data[max_data$Group == group,]
+    max_measurement_value <- 0
+    max_measurement <- 0
+    for(j in vFCCPMeasurements[1]:tail(vFCCPMeasurements,1)) {
+      mean_measurement <- mean(max_data[max_data$Measurement == j,]$OCR)
+      if(mean_measurement > max_measurement_value) {
+        max_measurement_value <- mean_measurement
+        max_measurement <- j
+      }
+    }
+    group_max_data <- group_max_data[group_max_data$Measurement == max_measurement,]$OCR
+    group_RA_data <- NonMito_Respiration[i]
+    group_max_data <- group_max_data - group_RA_data
+    Max_Respiration[i,1] <- mean(group_max_data)
+    CV <- sd(group_max_data) / mean(group_max_data) * 100
+    # if(CV > CV_cutoff) {
+    #   print(paste0("Warning: ", "Max_Respiration of ", group, " has CV ", round(CV,0), "%"))
+    # }
+  }
+  
+  ### Calculate Proton Leak
+  Proton_Leak <- matrix(nrow=nGroups,ncol=1)
+  colnames(Proton_Leak) <- "Proton_Leak"
+  rownames(Proton_Leak) <- Groups
+  oligo_data <- Seahorse_data[Seahorse_data$Measurement %in% vOligoMeasurements,]
+  for(i in 1:nGroups) {
+    group <- Groups[i]
+    # Select the min measurement timepoint for each cell line
+    group_oligo_data <- oligo_data[oligo_data$Group == group,]
+    min_measurement_value <- 10000
+    min_measurement <- 10000
+    for(j in vOligoMeasurements[1]:tail(vOligoMeasurements,1)) {
+      mean_measurement <- mean(oligo_data[oligo_data$Measurement == j,]$OCR)
+      if(mean_measurement < min_measurement_value) {
+        min_measurement_value <- mean_measurement
+        min_measurement <- j
+      }
+    }
+    group_oligo_data <- group_oligo_data[group_oligo_data$Measurement == min_measurement,]$OCR
+    group_RA_data <- NonMito_Respiration[i]
+    group_proton_data <- group_oligo_data - group_RA_data
+    Proton_Leak[i,] <- mean(group_proton_data)
+    CV <- sd(group_proton_data) / mean(group_proton_data) * 100
+    # if(CV > CV_cutoff) {
+    #   print(paste0("Warning: ", "Proton_Leak of ", group, " has CV ", round(CV,0), "%"))
+    # }
+  }
+  
+  ### Calculate ATPlinked Respiration
+  ATPlinked_Respiration <- matrix(nrow=nGroups,ncol=1)
+  colnames(ATPlinked_Respiration) <- "ATPlinked_Respiration"
+  rownames(ATPlinked_Respiration) <- Groups
+  baseline_data <- Seahorse_data[Seahorse_data$Measurement %in% vBaselineMeasurements,]
+  oligo_data <- Seahorse_data[Seahorse_data$Measurement %in% vOligoMeasurements,]
+  for(i in 1:nGroups) {
+    group <- Groups[i]
+    group_basal_data <- Basal_Respiration[i]
+    group_oligo_data <- Proton_Leak[i]
+    group_linked_data <- group_basal_data - group_oligo_data
+    ATPlinked_Respiration[i,] <- mean(group_linked_data)
+  }
+  
+  ### Calculate Spare Respiration
+  Spare_Respiration<- matrix(nrow=nGroups,ncol=1)
+  Spare_Respiration <- Max_Respiration - Basal_Respiration
+  colnames(Spare_Respiration) <- "Spare_Respiration"
+  rownames(Spare_Respiration) <- Groups
+  
+  
+  ### Calculate Coupling Efficiency
+  Coupling_Efficiency <- matrix(nrow=nGroups,ncol=1)
+  colnames(Coupling_Efficiency) <- "Coupling_Efficiency"
+  rownames(Coupling_Efficiency) <- Groups
+  for(i in 1:nGroups) {
+    group <- Groups[i]
+    group_linked_data <- ATPlinked_Respiration[i]
+    group_basal_data <- Basal_Respiration[i]
+    group_coupling_data <- group_linked_data / group_basal_data * 100
+    Coupling_Efficiency[i,] <- mean(group_coupling_data)
+  }
+  
+  ### Calculate Baseline ECAR
+  Baseline_ECAR <- matrix(nrow=nGroups,ncol=1)
+  colnames(Baseline_ECAR) <-"Baseline_ECAR"
+  rownames(Baseline_ECAR) <- Groups
+  baseline_data <- Seahorse_data[Seahorse_data$Measurement %in% tail(vBaselineMeasurements,1),]
+  for(i in 1:nGroups) {
+    group <- Groups[i]
+    group_baseline_data <- baseline_data[baseline_data$Group == group,]$ECAR
+    Baseline_ECAR[i,] <- mean(group_baseline_data)
+    CV <- sd(group_baseline_data) / mean(group_baseline_data) * 100
+    # if(CV > CV_cutoff) {
+    #   print(paste0("Warning: ", "Baseline_ECAR of ", group, " has CV ", round(CV,0),"%"))
+    # }
+  }
+  
+  
+  ### Calculate Max ECAR
+  Max_ECAR <- matrix(nrow=nGroups,ncol=1)
+  colnames(Max_ECAR) <-"Max_ECAR"
+  rownames(Max_ECAR) <- Groups
+  oligo_data <- Seahorse_data[Seahorse_data$Measurement %in% c(vOligoMeasurements,vFCCPMeasurements),]
+  for(i in 1:nGroups) {
+    group <- Groups[i]
+    # Select the max measurement timepoint for each cell line
+    group_max_data <- oligo_data[oligo_data$Group == group,]
+    max_measurement_value <- 0
+    max_measurement <- 0
+    for(j in vOligoMeasurements[1]:tail(vFCCPMeasurements,1)) {
+      mean_measurement <- mean(oligo_data[oligo_data$Measurement == j,]$ECAR)
+      if(mean_measurement > max_measurement_value) {
+        max_measurement_value <- mean_measurement
+        max_measurement <- j
+      }
+    }
+    group_max_data <- group_max_data[group_max_data$Measurement == max_measurement,]$ECAR
+    Max_ECAR[i,] <- mean(group_max_data)
+    CV <- sd(group_baseline_data) / mean(group_baseline_data) * 100
+    # if(CV > CV_cutoff) {
+    #   print(paste0("Warning: ", "Max_ECAR of ", group, " has CV ",round(CV,0), "%"))
+    # }
+  }
+  
+  ### Calculate Spare ECAR
+  Spare_ECAR <- matrix(nrow=nGroups,ncol=1)
+  Spare_ECAR <- Max_ECAR - Baseline_ECAR
+  colnames(Spare_ECAR) <-"Spare_ECAR"
+  rownames(Spare_ECAR) <- Groups
+  
+  MitoStress_Data <- data.frame(Baseline_Respiration, NonMito_Respiration, Basal_Respiration, Max_Respiration, Spare_Respiration, Proton_Leak, ATPlinked_Respiration, Coupling_Efficiency, Baseline_ECAR, Max_ECAR, Spare_ECAR)
+  MitoStress_Data
+  
+  
+  ## Calculate ATPproduction Parameters
+  
+  
+  ### Assumed Conditions
+  Substrate <- "Glucose"
+  Medium <- "XF Medium"
+  Cell_Type <- "Fibroblasts"
+  
+  ### Reference Values
+  Buffering_Power <- 0.1 # XF Assay DMEM, value from Table 4 of
+  # Mookerjee SA, Brand MD. Measurement and Analysis of Extracellular Acid Production to Determine Glycolytic Rate. J Vis Exp. 2015;(106):e53464. Published 2015 Dec 12. doi:10.3791/53464, 
+  # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4692795/
+  pKi <- 6.093
+  pH <- 7.4
+  
+  POglycogen <- 0.242
+  
+  ### PO Ratio Source - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5634631/#pcbi.1005758.s008
+  POglucose <- 2.17
+  POglutamine <-  2.07
+  POpalmitate <- 2.0
+  POoxphos <- ((POglucose * 2) + (POglutamine * 3) + (POpalmitate * 1)) / 6 
+  #POoxphos # 2.09
+  
+  ### PO Ratio Source -https://www.researchgate.net/publication/314304483_Quantifying_Intracellular_Rates_of_Glycolytic_and_Oxidative_ATP_Production_and_Consumption_Using_Extracellular_Flux_Measurements/figures
+  POglucose <- 2.651 
+  POglutamine <-  2.45
+  POpalmitate <-  2.45
+  POoxphos <- ((POglucose * 2) + (POglutamine * 3) + (POpalmitate * 1)) / 6 
+  #POoxphos # 2.517
+  
+  ### PO Ratio Source - https://www.jbc.org/content/293/32/12649.long, Supplemental Table 1
+  POoxphos <- 2.486 
+  POtca <- 0.121
+  
+  Hyperpolarization_Correction_Factor <- 0.908
+  maxH_O2 <- 1
+  ATPlactate <- 1
+  
+  ### Seahorse Variables
+  OCRmito <- Basal_Respiration
+  OCRmito_max <- Max_Respiration
+  OCRoligo <- ATPlinked_Respiration
+  OCRcoupled <-OCRoligo * Hyperpolarization_Correction_Factor
+  OCRcoupled_max <- (Spare_Respiration + OCRoligo) * Hyperpolarization_Correction_Factor
+  
+  ECARtotal  <- Baseline_ECAR
+  ECARtotal_max  <- Max_ECAR
+  
+  PPRtotal <- ECARtotal / Buffering_Power
+  PPRtotal_max <- ECARtotal_max / Buffering_Power
+  
+  PPRresp <- (10^(pH - pKi)) / (1 + (10^(pH - pKi))) * maxH_O2 * OCRmito
+  PPRresp_max <- (10^(pH - pKi)) / (1 + (10^(pH - pKi))) * maxH_O2 * OCRmito_max
+  
+  PPRgly <- PPRtotal - PPRresp
+  PPRgly_max <- PPRtotal_max - PPRresp_max
+  
+  # ATP production from glycolysis and OXPHOS
+  ATPglyc <- (PPRgly * ATPlactate) + (OCRmito * 2 * POglycogen)
+  ATPglyc_max <- (PPRgly_max * ATPlactate) + (OCRmito_max * 2 * POglycogen)
+  ATPglyc_spare <- ATPglyc_max - ATPglyc
+  
+  ATPox <- (OCRcoupled * 2  * POoxphos) + (OCRmito * 2 * POtca)
+  ATPox_max <- (OCRcoupled_max * 2  * POoxphos) + (OCRmito_max * 2 * POtca)
+  ATPox_spare <- ATPox_max - ATPox
+  
+  # Total ATP Production
+  ATPtotal <- ATPglyc + ATPox
+  ATPtotal_max <- ATPglyc_max + ATPox_max
+  ATPtotal_spare <- ATPtotal_max - ATPtotal
+  
+  
+  ### Calculate Wattage of Cells
+  nCells <- 20000
+  cellMass <- 10 # nanograms
+  kg_per_ng <- 10^12
+  pmoles_per_mole <- 10^-12
+  avagadros_number <- 6.022*10^23
+  joules_per_atp_molecule <- 1*10^-19
+  seconds_per_minute <- 60
+  watts_per_joule_per_second <- 1
+  picowatts_per_watt <- 10^12
+  PicoWatts_per_cell <- ATPtotal / nCells * pmoles_per_mole * avagadros_number * joules_per_atp_molecule / seconds_per_minute * watts_per_joule_per_second * picowatts_per_watt  
+  Max_PicoWatts_per_cell <- ATPtotal_max / nCells * pmoles_per_mole * avagadros_number * joules_per_atp_molecule / seconds_per_minute * watts_per_joule_per_second * picowatts_per_watt  
+  Watts_per_kilogram <- PicoWatts_per_cell / picowatts_per_watt/ cellMass * kg_per_ng
+  Max_Watts_per_kilogram <- Max_PicoWatts_per_cell / picowatts_per_watt/ cellMass * kg_per_ng
+  
+  ### Convert to physiological Metabolic Rate units - ml/kg/min
+  ng_per_kg <- 1*10^12
+  molesO2air_per_liter <- 0.0446
+  ml_per_liter <- 1000
+  Resting_Metabolic_Rate <- Baseline_Respiration / nCells / cellMass * ng_per_kg * pmoles_per_mole / molesO2air_per_liter * ml_per_liter
+  Max_Metabolic_Rate <- Max_Respiration / nCells / cellMass * ng_per_kg * pmoles_per_mole / molesO2air_per_liter * ml_per_liter
+  
+  ### Combine Data
+  ATP_Data <- data.frame(ATPtotal, ATPglyc, ATPox, ATPtotal_max, ATPglyc_max, 
+                         ATPox_max, ATPtotal_spare, ATPox_spare, ATPglyc_spare, 
+                         Resting_Metabolic_Rate, Max_Metabolic_Rate, 
+                         PicoWatts_per_cell, Max_PicoWatts_per_cell, Watts_per_kilogram, Max_Watts_per_kilogram,OCRcoupled, PPRtotal, PPRresp, PPRgly, PPRtotal_max, PPRgly_max, PPRresp_max)
+  
+  colnames(ATP_Data) <- c("ATPtotal", "ATPglyc", "ATPox", "ATPtotal_max", "ATPglyc_max", "ATPox_max", "ATPtotal_spare", "ATPox_spare", "ATPglyc_spare","Resting_Metabolic_Rate", "Max_Metabolic_Rate",
+                          "PicoWatts_per_cell", "Max_PicoWatts_per_cell", "Watts_per_kilogram", "Max_Watts_per_kilogram", "OCRcoupled", "PPRtotal", "PPRresp", "PPRgly", "PPRtotal_max", "PPRgly_max", "PPRresp_max")
+  ATP_Data
+  
+  
+  
+  
+  ## Combine and save all data
+  all_data <- data.frame(rownames(MitoStress_Data), rep(Date_of_experiment, nGroups), rep(Experiment_name, nGroups), MitoStress_Data, ATP_Data)
+  colnames(all_data)[1:3] <- c("Cell_group","Date_of_Experiment", "Experiment_Name")
+  all_data
+  setwd(resultsDir)
+  write.csv(all_data, paste0("Seahorse_Processed_Data_", filename), row.names = F)
+  
+  
+  
+  ## Plot Seahorse Traces
+  
+  # Organize Seahorse data into mean groups/measurement values for trace plots
+  plot_data <- as.data.frame(matrix(nrow=nGroups*Timepoints, ncol=9))
+  colnames(plot_data) <- c("Group", "Measurement", "Time", "Average_OCR", "SEM_OCR", "CV_OCR", "Average_ECAR", "SEM_ECAR", "CV_ECAR")
+  count <- 1
+  for(i in 1:nGroups) {
+    group <- Groups[i]
+    group_data <- Seahorse_data[Seahorse_data$Group == group,]
+    for(j in 1:Timepoints) {
+      plot_data$Group[count] <- group
+      plot_data$Measurement[count] <- j
+      time_data <- group_data[group_data$Measurement == j,]
+      plot_data$Time[count] <- time_data$Time[1]
+      average_OCR <- mean(time_data$OCR)
+      plot_data$Average_OCR[count] <- average_OCR
+      sd_OCR <- sd(time_data$OCR)
+      plot_data$SEM_OCR[count] <- sd_OCR / sqrt(length(time_data))
+      plot_data$CV_OCR[count] <- sd_OCR / average_OCR * 100
+      
+      average_ECAR <- mean(time_data$ECAR)
+      plot_data$Average_ECAR[count] <- average_ECAR
+      sd_ECAR <- sd(time_data$ECAR)
+      plot_data$SEM_ECAR[count] <- sd_ECAR / sqrt(length(time_data))
+      plot_data$CV_ECAR[count] <- sd_ECAR / average_ECAR * 100
+      count <- count + 1
+    }
+  }
+  plot_data
+  
+  library(ggplot2)
+  
+  # OCR Trace
+  OCRtrace <- ggplot(data=plot_data, aes(x=Time,y=Average_OCR, color = Group)) +
+    geom_errorbar(aes(ymin=Average_OCR - SEM_OCR, ymax=Average_OCR + SEM_OCR), width=1) +
+    geom_point(size = 1, alpha = 0.5) +
+    geom_line() +
+    scale_x_continuous(name="Time (min)") +
+    scale_y_continuous(name="OCR (pmol/min/20kcells)") +
+    theme_classic(base_size = 16)
+  OCRtrace
+  
+  # ECAR Trace
+  ECARtrace <- ggplot(data=plot_data, aes(x=Time,y=Average_ECAR, color = Group)) +
+    geom_errorbar(aes(ymin=Average_ECAR - SEM_ECAR, ymax=Average_ECAR + SEM_ECAR), width=1) +
+    geom_point(size = 1, alpha = 0.5) +
+    geom_line() +
+    scale_x_continuous(name="Time (min)") +
+    scale_y_continuous(name="ECAR (mpH/min/20kcells)") +
+    theme_classic(base_size = 16)
+  ECARtrace
+  
+  # Save Plots
+  setwd(resultsDir)
+  #jpeg(filename=paste0("OCR_Trace_", Experiment_name, as.character(Date_of_experiment), ".jpeg"), width = 1200, height = 800)
+  OCRtrace <-  OCRtrace + theme_classic(base_size = 24)
+  #dev.off()
+  
+  #jpeg(filename=paste0("ECAR_Trace_", Experiment_name, as.character(Date_of_experiment), ".jpeg"), width = 1200, height = 800)
+  ECARtrace <- ECARtrace + theme_classic(base_size = 24)
+  #dev.off()
+  return(list(all_data, OCRtrace, ECARtrace))
+  
+}
+
+
+file_names <- dir(dataDir, pattern =".csv")
+file_names
+combined_data <- data.frame()
+for(i in 1:length(file_names)) {
+  setwd(dataDir)
+  filename <- file_names[i]
+  file <- read.csv(filename)
+  info <- substring(filename,str_locate(filename, "Mi")[,1])
+  Date_of_experiment <- substring(info, 7, 16)
+  Experiment_name <- substring(info, 1, 5)
+  if(grepl('Rep', Experiment_name, fixed = TRUE)) {
+    Date_of_experiment <- substring(info, 9, 18)
+    Experiment_name <- substring(info, 1, 7)
+  }
+  Injection_Strategy <- c(3,3,3,3,3)
+  results <- ProcessSeahorseData(filename, file, Date_of_experiment, Experiment_name, Injection_Strategy)
+  combined_data <- rbind(combined_data, results[[1]])
+  setwd(resultsDir)
+  jpeg(filename=paste0("OCR_Trace_", Experiment_name,"_", as.character(Date_of_experiment), ".jpeg"), width = 1200, height = 800)
+    print(results[[2]])
+  dev.off()
+  
+  jpeg(filename=paste0("ECAR_Trace_", Experiment_name,"_", as.character(Date_of_experiment), ".jpeg"), width = 1200, height = 800)
+    print(results[[3]])
+  dev.off()
+}
+setwd(resultsDir)
+write.csv(combined_data,"Combined_seahorse_processed_data.csv", row.names=F)
+
