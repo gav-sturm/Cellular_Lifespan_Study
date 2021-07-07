@@ -1,7 +1,9 @@
-
-
-
-
+########
+# Title: DNA Methylation Preprocessing Script
+# Author: Gabriel Sturm (adapted from Andres Cardenas)
+# Date: 2020-01-01
+# see MinFi pipeline: https://www.bioconductor.org/packages/release/workflows/vignettes/methylationArrayAnalysis/inst/doc/methylationArrayAnalysis.html
+#
 
 ## Load packages needed
 R.version$version.string  
@@ -28,40 +30,24 @@ library(minfi)
 library(IlluminaHumanMethylationEPICmanifest)
 
 
-## set working directory to folder with all idats (96 files=48 samples)
-#setwd("F:/Cluster/Collaborations/MitoLab (Martin)/Project_PIC_12958_B01_CUS_MethylEPIC.2017-12-11/idat/idats_all")
-#baseDir<-"F:/Cluster/Collaborations/MitoLab (Martin)/Project_PIC_12958_B01_CUS_MethylEPIC.2017-12-11/idat/idats_all"
-setwd("/Users/gabrielsturm/Google Drive (gabriel.sturm@nyspi.columbia.edu)/MitoLab - General/DATA/Data Core Labs/DNA Methylation/UCNG_2019-9189_Picard_Meth_Epic_Lifespan_Study/idats")
-dir()
-baseDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/DATA/Data Core Labs/DNA Methylation/UCNG_2019-9189_Picard_Meth_Epic_Lifespan_Study/idats/all_idats"
-
-files <-list.files(path = baseDir)
+## set directory to folder with all idats (2 files per sample)
+rawFileDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/DATA/Data Core Labs/DNA Methylation/UCNG_2019-9189_Picard_Meth_Epic_Lifespan_Study/idats/all_idats"
+setwd(rawFileDir)
+files <-list.files(path = rawFileDir)
 length(files)
 files
 
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
-setwd(baseDir2) # Mac
+## set working directory to place processed dataframes
+workingDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+setwd(workingDir) # Mac
 dir()
 basenames <- read.csv("basenames.csv")
 
-### Generate Folder with all idat files
-# setwd(baseDir)
-# file_list <- list.files(path = baseDir, pattern = "*.idat", recursive = TRUE, full.names = TRUE)
-# dir.create("all_idats")
-# all_idats_dir <- "/Users/gabrielsturm/Google Drive (gabriel.sturm@nyspi.columbia.edu)/MitoLab - General/DATA/Data Core Labs/DNA Methylation/UCNG_2019-9189_Picard_Meth_Epic_Lifespan_Study/idats/all_idats/"
-# for(i in 1:length(file_list)) {
-#   file.copy(file_list[i], all_idats_dir)
-# }
-
-### Setup Targets File
-# setwd("/Users/gabrielsturm/Google Drive (gabriel.sturm@nyspi.columbia.edu)/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 3- Epigenetic Cell Aging/DM_R_Analysis/")
-# load("betas.rcp.FunNorm.rdata")
-# write.csv(targets, "targets.csv")
 
 ## Read.rgSet
 
 ## Merge with experimental info
-targets <- read.metharray.sheet(baseDir)
+targets <- read.metharray.sheet(rawFileDir)
 length(unique(targets$Basename))  ## 512 unique arrays
 
 ## Read Methylation data from IDAT files
@@ -73,7 +59,7 @@ length(intersect(targets$Sample_Name, Raw.RGset$Sample_Name)) ## 512
 identical(targets$Sample_Name,Raw.RGset$Sample_Name) # TRUE
 all(targets$Sample_Name==Raw.RGset$Sample_Name) # TRUE
 
-setwd(baseDir2)
+setwd(workingDir)
 save(Raw.RGset, targets, file = "")
 
 load("RGset.Raw.RData")
@@ -85,7 +71,8 @@ methylated[1:5,1:5]
 unmethylated <- getUnmeth(MSet)
 unmethylated[1:5,1:5]
 
-setwd(baseDir2)
+# save methylated and unmethylated signal matrices
+setwd(workingDir)
 save(methylated, file="Methylated_Signal.RData")
 save(unmethylated, file="Unmethylated_Signal.RData")
 
@@ -106,15 +93,13 @@ require(minfi)
 dataMethylAid <- summarize(targets)
 
 ## Save MethylAid objects
-setwd(baseDir2)
+setwd(workingDir)
 save(dataMethylAid,targets,file="dataMethylAid.RAW.RData")
 visualize(dataMethylAid)
 
 
-
-
 ## Sex-prediction with genomic ranges for X-Y chromosomes
-setwd(baseDir2)
+setwd(workingDir)
 load("RGset.Raw.RData")
 GRset <- mapToGenome(Raw.RGset)
 
@@ -131,6 +116,7 @@ dev.off()
 
 sex_prediction <- getSex(GRset)
 
+# save sex predictions
 write.csv(sex_prediction, "DNAm_sample_sex_prediction.csv")
 
 
@@ -172,6 +158,7 @@ my.plotQC(qc)
 
 dev.off()
 
+# identify the bad samples below QC threshold
 badSampleCutoff = 0.97
 meds <- (qc$uMed/qc$mMed)
 whichBad <- which((meds < badSampleCutoff))
@@ -186,10 +173,12 @@ other_bad_samples <- c("203833030104_R02C01",
                        "203833030104_R04C01",
                        "203833030104_R08C01")
 intersect(QC_Bad_Samples, other_bad_samples)
-baseDir3 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/shinyapp"
-setwd(baseDir3)
-dir()
+
+# load in full lifespan study datasheet
+lifespanDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/shinyapp"
+setwd(lifespanDir)
 LS_Data <- read.csv("Lifespan_Study_Data.csv")
+setwd(workingDir)
 
 Bad_Sample_info <- LS_Data[LS_Data$basename %in% QC_Bad_Samples$x,]
 nrow(Bad_Sample_info) == nrow(QC_Bad_Samples)
@@ -204,7 +193,7 @@ MSet.raw <- preprocessRaw(Raw.RGset)
 save(MSet.raw,file="MSet_raw.RData")
 
 
-setwd(baseDir)
+setwd(rawFileDir)
 targets <- read.csv("targets_2.csv", row.names = 1)
 
 ## Same dimensions?
@@ -213,7 +202,7 @@ targets <- targets[match(colnames(MSet.raw), rownames(targets)),]
 all(rownames(targets)==colnames(MSet.raw)) ## TRUE
 identical(rownames(targets),colnames(MSet.raw)) ## TRUE
 
-setwd(baseDir2)
+setwd(workingDir)
 ## Density plot by sample plate
 require(scales)
 tiff("Sample_by_plate.tiff", width = 12, height = 8, 
@@ -300,9 +289,6 @@ title(ylab="#-SNPs with unclear beta range", line=5, cex.lab=1.2)
 dev.off()
 
 
-
-
-
 ## Annotation of Infinium type for each probe (I vs II)
 typeI <-   minfi::getProbeInfo(MSet.raw,type="I")$Name
 typeII <-  minfi::getProbeInfo(MSet.raw,type="II")$Name
@@ -344,11 +330,7 @@ qcReport(Raw.RGset, sampNames=targets$Sample_Name, sampGroups=targets$Sample_Pla
 ##################################################
 ##
 ##
-##
-##
 ##   Detecion P-values
-##
-##
 ##
 ##
 ##
@@ -399,13 +381,7 @@ write.csv(Pvalue_bad, "Detection_P_Values_Bad_Samples.csv")
 ################################################################
 ## 
 ##
-##                 After Fun Norm
-##
-##
-##
-##
-##
-##
+##  Fun Norm
 ##
 ##
 ##
@@ -434,15 +410,11 @@ dev.off()
 save(Mset.norm,targets,file = "Mset.FunNorm.RData")
 
 
-
-
 ##########################
 ## RCP
 ##
 ##
-##
-##
-##
+
 ## Aligment
 all(rownames(targets)==colnames(Mset.norm)) # TRUE
 ## Identical
@@ -482,8 +454,6 @@ GRset <- mapToGenome(Mset.norm)
 annotation<-getAnnotation(GRset) # 5 min
 annotation=annotation[intersect(rownames(betas.FunNorm),rownames(annotation)),]
 dim(annotation);dim(betas.FunNorm)
-
-
 
 probe.II.Name = annotation$Name[annotation$Type=="II"]
 annotation = annotation[order(annotation$chr,annotation$pos),]
@@ -582,16 +552,10 @@ dev.off()
 ## Combat Adjustment
 ##
 ##
-##
-##
-##
-##
-##
-##
 
 library(sva)                                           # ComBat Adjustment
 
-setwd(baseDir2)
+setwd(workingDir)
 load("betas.rcp.FunNorm.RData")
 
 setwd("/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/")
@@ -681,210 +645,6 @@ hist(betas) # grapg
 ## Check Aligment
 identical(colnames(betas), rownames(targets)) # TRUE
 
-
-setwd(baseDir2)
+# Save final Combat-adjusted dataframe
+setwd(workingDir)
 save(betas, targets, file = "Combat_Betas.RData")
-
-# make GEO processed matrix
-setwd(baseDir2)
-load("DetectionPvalues.RData")
-detP[1:5,1:5]
-load("Combat_Betas.RData")
-dim(betas)
-detP <- detP[rownames(detP) %in% rownames(betas),]
-nrow(detP) == nrow(betas)
-detP <- detP[match(rownames(betas),rownames(detP)),]
-identical(rownames(betas),rownames(detP))
-
-# Exclude MiSBIE Samples
-targets_2 <- subset(targets, targets$Experiment != 5)
-nrow(targets_2) # 496
-betas <- betas[,colnames(betas) %in% rownames(targets_2)]
-ncol(betas) # 496
-
-# remove excluded samples
-bad_samples <- unique(c(QC_Bad_Samples$x, other_bad_samples,"203784950019_R01C01"))
-length(bad_samples)
-betas <- betas[,!colnames(betas) %in% bad_samples]
-ncol(betas) # 480
-
-# match samples in detP matrix
-detP <- detP[,colnames(detP) %in% colnames(betas)]
-detP <- detP[,match(colnames(betas),colnames(detP))]
-identical(colnames(betas),colnames(detP))
-
-# combine matrices
-rows.combined <- nrow(betas) 
-cols.combined <- ncol(betas) + ncol(detP)
-GEO_processed_df <- matrix(NA, nrow=rows.combined, ncol=cols.combined)
-GEO_processed_df[, seq(1, cols.combined, 2)] <- betas
-GEO_processed_df[, seq(2, cols.combined, 2)] <- detP
-rownames(GEO_processed_df) <- rownames(betas)
-colnames(GEO_processed_df) <- paste0(rep(colnames(betas),each=2),"",rep(c(" beta"," Detection Pval"), ncol(betas)))
-GEO_processed_df[1:5,1:10]
-dim(GEO_processed_df)
-
-setwd(baseDir2)
-write.csv(GEO_processed_df,"GEO_DNAm_processed_matrix.csv")
-
-
-# make signal intensity matrix for GEO submission
-setwd(baseDir2)
-load("DetectionPvalues.RData")
-detP[1:5,1:5]
-load("Methylated_Signal.RData")
-load("Unmethylated_Signal.RData")
-nrow(detP) == nrow(unmethylated)
-identical(rownames(detP), rownames(unmethylated))
-nrow(detP) == nrow(methylated)
-identical(rownames(detP), rownames(methylated))
-
-# Exclude MiSBIE Samples
-targets_2 <- subset(targets, targets$Experiment != 5)
-nrow(targets_2) # 496
-methylated <- methylated[,colnames(methylated) %in% rownames(targets_2)]
-ncol(methylated) # 496
-
-# remove excluded samples
-bad_samples <- unique(c(QC_Bad_Samples$x, other_bad_samples,"203784950019_R01C01"))
-length(bad_samples)
-methylated <- methylated[,!colnames(methylated) %in% bad_samples]
-ncol(methylated) # 480
-
-# match samples in detP matrix
-detP <- detP[,colnames(detP) %in% colnames(methylated)]
-detP <- detP[,match(colnames(methylated),colnames(detP))]
-identical(colnames(methylated),colnames(detP))
-
-# match samples in unmethylated matrix
-unmethylated <- unmethylated[,colnames(unmethylated) %in% colnames(methylated)]
-unmethylated <- unmethylated[,match(colnames(methylated),colnames(unmethylated))]
-identical(colnames(methylated),colnames(unmethylated))
-
-# combine matrices
-rows.combined <- nrow(unmethylated) 
-cols.combined <- ncol(unmethylated) + ncol(methylated) + ncol(detP)
-GEO_signal_df <- matrix(NA, nrow=rows.combined, ncol=cols.combined)
-GEO_signal_df[, seq(1, cols.combined, 3)] <- unmethylated
-GEO_signal_df[, seq(2, cols.combined, 3)] <- methylated
-GEO_signal_df[, seq(3, cols.combined, 3)] <- detP
-rownames(GEO_signal_df) <- rownames(unmethylated)
-colnames(GEO_signal_df) <- paste0(rep(colnames(methylated),each=3)," ",rep(c("Unmethylated Signal","Methylated Signal","Detection Pval"), ncol(methylated)))
-GEO_signal_df[1:5,1:10]
-dim(GEO_signal_df)
-setwd(baseDir2)
-write.csv(GEO_signal_df,"GEO_DNAm_signal_intensities_matrix.csv")
-
-
-# metadata for GEO sumbission
-setwd("/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/shinyapp")
-dir()
-GEO_metadata <- read.csv("downloadable_data/Cellular_Lifespan_study_DNAm.csv")
-GEO_metadata <- GEO_metadata[!is.na(GEO_metadata$DNAmethylation_sampleID),]
-GEO_metadata <- GEO_metadata[GEO_metadata$DNAmethylation_sampleID != "",]
-GEO_metadata <- GEO_metadata[order(GEO_metadata$DNAmethylation_sampleID),]
-rownames(GEO_metadata) <- GEO_metadata$DNAmethylation_sampleID
-nrow(GEO_metadata)
-
-# remove excluded samples
-bad_samples <- unique(c(QC_Bad_Samples$x, other_bad_samples,"203784950019_R01C01"))
-length(bad_samples)
-GEO_metadata <- GEO_metadata[!GEO_metadata$DNAmethylation_sampleID %in% bad_samples,]
-nrow(GEO_metadata) # 479
-
-# keep rows in sensical order
-GEO_metadata <- GEO_metadata[order(GEO_metadata$Sample),]
-
-# # find two missing samples
-targets_3 <- targets_2[rownames(targets_2) %in% colnames(methylated),]
-missing_metadata_samples <- targets_3[!rownames(targets_3) %in% GEO_metadata$DNAmethylation_sampleID,]
-nrow(missing_metadata_samples) # 0
-
-# add info from targets file
-targets_3 <- targets_3[match(rownames(GEO_metadata),rownames(targets_3)),]
-identical(rownames(GEO_metadata),rownames(targets_3))
-GEO_metadata <- data.frame(GEO_metadata,targets_3)
-
-setwd(baseDir2)
-write.csv(GEO_metadata,"GEO_DNAm_metadata.csv")
-
-
-
-
-
-
-
-
-
-## Run PCA on entire dataset
-setwd(baseDir2)
-dir()
-load("betas.rcp.FunNorm.RData")
-
-# Exclude MiSBIE Samples
-targets_2 <- subset(targets, targets$Experiment != 5)
-nrow(targets_2) # 496
-data <- beta.rcp[,colnames(beta.rcp) %in% rownames(targets_2)]
-ncol(data) # 496
-
-# Exclude HEK Cells
-targets_3 <- subset(targets_2, targets_2$person != "HEK293")
-nrow(targets_3) # 484
-data <- data[,colnames(data) %in% rownames(targets_3)]
-ncol(data) # 484
-
-pca = prcomp(t(data), center = TRUE, scale = TRUE) # 10 min
-print(pca)
-sum <- summary(pca)
-sum$importance[2] # Proportion of Variance Explained for PC1
-sum$importance[5] # Proportion of Variance Explained for PC2
-sum$importance[8] # Proportion of Variance Explained for PC3
-
-plot(pca, type = "l", ylim=c(0, 150000))
-PoV <- pca$sdev^2/sum(pca$sdev^2)*100
-plot(PoV, type = "o", ylab = "Percent of Variance", xlab = "PC", ylim = c(0,20),xlim= c(1,10), xaxp  = c(0,10,10))
-
-pca$x[,1:3]
-
-library(pca3d)
-pca2d(pca, group = colnames(data), show.labels = FALSE)
-axis(1, xaxp = c(-900,900,20))
-axis(2, yaxp = c(-800,500,20))
-pca3d(pca, group = colnames(data), show.labels = FALSE)
-
-#export PC's 1-3
-write.csv(pca$x[,1:5], "PCA_Data_HEK_removed.csv")
-
-targets_3 <- targets_3[match(rownames(pca$x), rownames(targets_3)),]
-targets_3$group <- paste(targets_3$person,targets_3$status, sep = "_")
-pca_data <- cbind(targets_3, pca$x[,1:3])
-
-shapes <- c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24)
-ggplot(pca_data, aes(x=PC1, y =PC2, color = person), label = age) +
-  geom_point(size = 4 , stroke = 1, aes(shape = status)) +
-  #geom_text(aes(label=Percent_Change),hjust=-0.2, vjust=1.2, size = 3) +
-  #scale_color_manual(values = colors) +
-  #scale_fill_manual(values = colors_2) +
-  geom_segment(aes(
-    xend=c(tail(PC1, n=-1), NA), 
-    yend=c(tail(PC2, n=-1), NA)), alpha = 0.1) + 
-  scale_shape_manual(values=shapes) +
-  geom_text(aes(label=paste(round(age, digits = 0), "days", sep = " ")),hjust=-.4, vjust=-.4, size = 3, alpha = 0.7) +
-  geom_vline(xintercept=0) +
-  geom_hline(yintercept=0) +
-  #scale_y_continuous(name = Y_title) +
-  #scale_x_continuous(name =  X_title) +
-  theme_classic() +
-  #annotate("text", label = annotation, x = 2, y = 0, size = 3, hjust = 0) +
-  theme(text = element_text(size = 14),
-        #legend.position="none",
-        axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
-        axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
-        plot.margin = margin(t = 6, r = 6, b = 6, l = 6, unit = "pt"),
-        plot.title = element_text(size = 32, hjust = 0.05, vjust = -.1))
-
-
-# Save beta.rcp with new targets file
-setwd(baseDir2) # Mac
-targets <- read_excel("Lifespan_DNAm_Samples.xlsx") %>% janitor::clean_names()
-save(beta.rcp,targets,file="betas.rcp.FunNorm.RData", compress = T)
