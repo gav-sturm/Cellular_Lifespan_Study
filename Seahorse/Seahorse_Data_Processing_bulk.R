@@ -1,9 +1,13 @@
+#############################
+##
+## title: "Seahorse_Data_Processing_bluk"
+## author: Gabriel (Gav) Sturm
+## date: 2020-10-20
+## output: CSV and JPEGs
+##
+##
+##
 
-# title: "Seahorse_Data_Processing_bluk"
-# author: "Gabriel Sturm"
-# date: "10/20/2020"
-# output: CSV and JPEGs
-  
 ###### Load Seahorse data
 ### Using the Seahorse_Data_Sheet.xlsm copy and paste the Normalized Data from raw data excel output file in csv file
 ### copy and paste the plate design with removed wells into Seahorse_Data_Sheet.xlsm - this will allow the script to remove those wells, hover over the pasted plate design and run the macro 'ListColors'. This will update the 'Removed' wells column. 

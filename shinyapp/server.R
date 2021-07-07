@@ -1,3 +1,13 @@
+#####################################
+##
+## Title: Cellular Lifespan Study ShinyApp Server code
+## Author: Gabriel (Gav) Sturm 
+## Date: 2021-01-01
+## 
+##
+##
+
+
 library(shiny)
 library(ggplot2)
 library(ggpmisc)
@@ -12,31 +22,18 @@ library(mgcv)
 library(processx)
 library(orca)
 
-
-#Sys.setenv('MAPBOX_TOKEN' = 'pk.eyJ1IjoiZ2F2c3R1cm0iLCJhIjoiY2s4cTJoOWc0MDB5YjNlcGNnZHVsOW52bCJ9.a3soFZR8t-LvzSmvHFSGLQ')
-
-# Load Dataset
+## Load Dataset
 # setwd("/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/shinyapp")
 # dir()
 LS_Data <- read.csv("Lifespan_Study_Data.csv")
 
-# Select Cell Type
-Cell_Lines <- c("None", "hFB1", "hFB2", "hFB11", "hFB12","hFB13", "hFB14", "hFB6","hFB7", "hFB8","HEK293")
-Cell_Lines_Full <- c("primary human fibroblast, breast, healthy male 18yo", "primary human fibroblast, breast, healthy female 18yo", 
-                     "primary human fibroblast, foreskin, healthy male 0yo", "primary human fibroblast, upper arm, healthy male 29yo", 
-                     "primary human fibroblast, upper arm, healthy female 36yo", "primary human fibroblast, upper arm, SURF1 Mutation male 1yo", "primary human fibroblast, upper arm, SURF1 Mutation male 11yo", "primary human fibroblast, upper arm, SURF1 Mutation female 9yo")
 
-Study_Parts <- c(1,2,3,4)
-
+# Parameter Lists
 Seahorse_Parameters <- c("ATPtotal","ATPglyc", "ATPox", "ATPtotal_max", "ATPglyc_max","ATPox_max"	, "ATPtotal_spare",	"ATPox_spare","ATPglyc_spare","Resting_Metabolic_Rate","Max_Metabolic_Rate", 
                          "PicoWatts_per_cell",	"Max_PicoWatts_per_cell",	"Watts_per_kilogram",	"Max_Watts_per_kilogram",
                           "Basal_Respiration", "Max_Respiration", "Oxidative_Spare_Capacity", "Proton_Leak", "Non_Mitochondrial_Respiration", 
                         "Baseline_ECAR", "Max_ECAR", "Glycolytic_Spare_Capacity", "BHI", "OCRcoupled", "PPRtotal", "PPRrespiration", 
                         "PPRglycolysis", "PPRtotal_max",	"PPRgly_max",	"PPRresp_max",	"ATP_Linked_Respiration", "Coupling_Efficiency", "Percent_Spare_Capacity")
-# Clock_Parameters <- c("PanTissue_Clock", "PanTissue_Normalized","Hannum_Clock","Skin_Blood_Clock", 
-#                       "PhenoAge_Clock", "GrimAge_Clock","GrimAge_Normalized", "DNAmTL", "Mitotic_Age",
-#                       "DunedinPoAm_Age", "Mol_Skin_Clock","DNAmSen","PCHorvath1",	"PCHorvath2",	"PCHannum",	"PCPhenoAge",
-#                       "PCDNAmTL",	"PCGrimAge")
 
 Clock_Parameters <- c("Horvath1",	"Horvath2",	"Hannum",	"PhenoAge",	"DNAmTL",	"GrimAge",	"DNAmADM",	"DNAmB2M",	
   "DNAmCystatinC",	"DNAmGDF15",	"DNAmLeptin",	"DNAmPAI1",	"DNAmTIMP1",	"DNAmPACKYRS",	
@@ -49,26 +46,16 @@ Deletions_Parameters <- c("mtDNA_deletion_Haplogroupe",	"mtDNA_deletion_Nb_de_dÃ
           "mtDNA_deletion_Mean_lenght",	"mtDNA_deletion_Min_lenght",	"mtDNA_deletion_Max_lenght",	"mtDNA_deletion_Mean_HT",	
           "mtDNA_deletion_Min_HT",	"mtDNA_deletion_Max_HT",	"mtDNA_deletion_Mean_Repeat_lenght",	"mtDNA_deletion_Min_Reapeat_lenght",
           	"mtDNA_deletion_Max_repeat_Lenght")
-#Sys.setenv("plotly_username"="gavsturm")
-#Sys.setenv("plotly_api_key"="s!ks5UvzPFmF!rH")
-#Graph_for_Download <- NULL
-
-#RNAseq_Gene_Data <- read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", header=TRUE, row.names = 1)
-#corrected_sample_name <- substring(colnames(RNAseq_Gene_Data),5,7)
-#colnames(RNAseq_Gene_Data) <- corrected_sample_name
-#Genes <- as.vector(rownames(RNAseq_Gene_Data))
 
 
+# calculator for the x axis limits and steps
 select_x_max <- function (data) {
   x_max <- 300
   step <- 50
-  
-
   if('Contact_Inhibition_Regrowth' %in% data$Treatments) {
     x_max <- 225
     step <- 25
   }
-  
   else if(is.element('4', data$Study_Part)) {
     x_max <- 175
     step <- 25
@@ -110,7 +97,7 @@ select_x_max <- function (data) {
   return(x_data)
 }
 
-
+# pick treatment colors
 getColors <- function(treatments) {
   colors <- c()
   for(i in 1:length(treatments)) {
@@ -188,7 +175,7 @@ getColors <- function(treatments) {
   return(colors)
 }
 
-
+# pick cell line colors
 getColors_2 <- function(cell_lines) {
   colors <- c()
   for(i in 1:length(cell_lines)) {
@@ -206,6 +193,7 @@ getColors_2 <- function(cell_lines) {
   return(colors)
 }
 
+# pick shapes of cell line symbols
 getShapes <- function(cell_lines) {
   shapes <- c()
   for(i in 1:length(cell_lines)) {
@@ -245,17 +233,8 @@ getShapes <- function(cell_lines) {
 }
 
 
-
-
 ##### Define server logic #####
 shinyServer(function(input, output, session) {
-  #output$overview<-renderText("This Shiny App provides a fast and easy way to explore the Cellular Lifesapn Study IL-6 Data published on _____ and collected by the Mitochondrial Signaling Lab at Columbia University Medical Center")
-  
-  # code to keep webpage active
-  # output$keepAlive <- renderText({
-  #   req(input$count)
-  #   paste("keep alive ", input$count)
-  # })
   
   # hyperlink
   url <- a("http://www.picardlab.org/", href="http://www.picardlab.org/")
@@ -312,17 +291,7 @@ shinyServer(function(input, output, session) {
                 selectize=TRUE, 
                 selected="Control_21") #default value
   })
-
-  # #Parameter list
-  # output$ParameterSelector<-renderUI({
-  #   selectInput('Parameter', 'Parameters',
-  #               Parameters, 
-  #               multiple=TRUE, 
-  #               selectize=TRUE, 
-  #               selected="IL6") #default value
-  # })
   
-
   #get the selected Cell Lines
   Selected_Cell_Lines <-reactive({
     if(is.null(input$Cell_Line) || length(input$Cell_Line)==0)
@@ -473,13 +442,6 @@ shinyServer(function(input, output, session) {
       theme_classic() +
       annotate("text", label = annotation, x = max(as.numeric(Data$Days_Grown),na.rm=T)/2, y = 0, size = 1, hjust = 1, vjust = 1) +
       coord_cartesian(clip = "off")
-      # theme(text = element_text(size = 14),
-      #       #legend.position="none",
-      #       axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
-      #       axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
-      #       plot.margin = margin(t = 6, r = 6, b = 6, l = 6, unit = "pt"),
-      #       plot.title = element_text(size = 32, hjust = 0.05, vjust = -.1))
-    
     groups <- unique(Data$Cell_line_group_new)
     
     if(input$legend == TRUE) {
@@ -494,11 +456,7 @@ shinyServer(function(input, output, session) {
       p = p + geom_smooth(method = "lm", formula = formula, size =0.4, aes(group = Cell_line_group_new),show.legend = FALSE, alpha = 0.05, se = SE)
   
     }
-    
-    # if(input$tabs == "DNA Methylation CpGs") {
-    #   p = p + scale_y_continuous(name = Y_title, breaks = c(0,1.0, by = 0.2), limits = c(0,1.0))
-    # }
-    
+
     if(second_axis == TRUE) {
       SF <- mean(Data$Population_Doublings_DI, na.rm = TRUE) / mean(parameter, na.rm = TRUE)
       Popdata <- Data$Population_Doublings_DI / SF
@@ -561,90 +519,10 @@ shinyServer(function(input, output, session) {
           startCount <- endCount
         }
       }
-      
-
-       
-          #geom_text(aes(label = annotations, x=xpos, y=ypos, size = 2, hjust = -.02, colour = colors))
-          #geom_text(aes(label = annotations, x=max(time_points), y=group_data[endCount], size = 2, color = colors[i])
-      
-       
       }
     
     return(p)
   }
-  
-  plotBar <- function(Data, parameter, Y_title) {
-    
-    scale <- input$scale
-    outlier <- input$outliers
-    #SE <- input$se
-    #DoF <- input$poly
-    #fit <- input$fit
-    #second_axis <- input$second_axis
-    
-    #x_data <- select_x_max(Data)
-    #x_max <- x_data[1]
-    #x_step <- x_data[2]
-    
-    if(scale == "log") {
-      parameter <- log10(parameter)
-      Y_title <- paste("Log10 ", Y_title, sep = "")
-    }
-    
-    outliers <- NULL
-    if(outlier == "yes") {
-      outliers <- boxplot(parameter, plot=FALSE)$out
-      outliers_data <- Data[(parameter %in% outliers),]
-      Data <- Data[!(parameter %in% outliers),]
-      parameter <- parameter[!(parameter %in% outliers)]
-    }
-    
-    
-    annotation <- ""
-    if(!is.null(outliers)) {
-      n <- length(outliers_data$Days_Grown)
-      tag <- rep("days", each=n)
-      outliers_days_grown <- paste(round(outliers_data$Days_Grown,0), tag, sep = " ")
-      concate_cols <- paste(outliers_data$Cell_Line_Group, outliers_days_grown, sep = ": ")
-      outlier_string <- paste(concate_cols , collapse = ", ")
-      annotation <- paste("Extreme Outlier(s) Removed: ", outlier_string)
-    }
-    
-    #formula <- y ~ poly(x, DoF, raw = TRUE)
-    
-    treatments <- sort(Selected_Treatments())
-    if(is.null(treatments)) {
-      colors <- 'dimgray'
-      colors_2 <- 'dimgray'
-      shapes <- 21
-      
-    }
-    else {
-      colors <- getColors(treatments)
-      colors_2 <- getColors_2(sort(Selected_Cell_Lines()))
-      shapes <- getShapes(sort(Selected_Cell_Lines()))
-    }
-    p <- ggplot(Data, aes_string(x = "Treatment", y = parameter, color ="Treatment")) +
-      geom_violin(trim = FALSE) +
-      stat_summary(fun.data="mean_sdl", mult=1, 
-                   geom="crossbar", width=0.2 ) +
-      geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
-      scale_y_continuous(name = Y_title) +
-      scale_color_manual(values = colors) +
-      scale_fill_manual(values = colors) +
-      #scale_shape_manual(values=shapes) +
-      theme_classic() +
-      theme(text = element_text(size = 14),
-            #legend.position="none",
-            axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
-            #axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
-            plot.margin = margin(t = 6, r = 6, b = 6, l = 6, unit = "pt"),
-            plot.title = element_text(size = 32, hjust = 0.05, vjust = -.1))
-    
-    
-    return(p)
-  }
-  
   
   #Cell Line list
   output$DatasetSelector<-renderUI({
@@ -687,29 +565,7 @@ shinyServer(function(input, output, session) {
     }
   )
   
-  # # Download all Graphs with Selected Data
-  # output$downloadGraphs <- downloadHandler(
-  #   filename = "Lifespan_Study_Graphs.pdf",
-  #   content = function(file) {
-  #     #export(Growth_Plot(), file='image.pdf')
-  #     htmlwidgets::saveWidget(Growth_Plot(), file = "index.html")
-  #     #pdf(file, 10, 5)
-  #     #plotly_IMAGE(Growth_Plot(), format = "pdf", out_file = file)
-  #     #print(Growth_Plot())
-  #     #print(Cell_Size_Plot())
-  #     #print(Percent_Dead_Plot())
-  #     #print(DNAmAge_Plot())
-  #     
-  #     #print(TL_Plot())
-  #     #print(CN_Plot())
-  #     #print(cfDNA_Plot())
-  #     #print(IL6_Plot())
-  #     #print(Seahorse_Plot())
-  #     
-  #     #dev.off()
-  #   }
-  # )
-  
+  # save graphs
   observeEvent(input$saveGraphs, {
    filename =  "Lifespan_Study_Graphs.pdf"
    plist <- list(Growth_Plot(), Cell_Size_Plot(), Percent_Dead_Plot(),TL_Plot(), CN_Plot(), cfDNA_Plot(), IL6_Plot())
@@ -718,23 +574,6 @@ shinyServer(function(input, output, session) {
   
   })
   
-  #EXPORT FUNCTION
-#   output$downloadGraphs <- downloadHandler(
-#     filename = "Lifespan_Study_Graphs.pdf",
-#     content <- function(file){
-#       pdf(file = filename)
-#       
-#       export(Growth_Plot(), file = "test.png")
-#       
-#       # r <- brick(file.path(getwd(), "test.png"))
-#       # plotRGB(r)
-#       
-#       dev.off()
-#     }
-#     
-#     #content(filename)
-# )
-#   
   
 
   #### Growth Curves ###
@@ -861,12 +700,6 @@ shinyServer(function(input, output, session) {
   #### DNAmAge ###
   ############  
   
-  
-  # observe({
-  #   if(input$tabs == "DNA Methylation Age") {
-  #     updateSliderInput(session, "poly", value = 3)
-  #   }
-  # })
   
   #Parameter list
   output$ClockSelector<-renderUI({
@@ -1528,13 +1361,6 @@ shinyServer(function(input, output, session) {
   #### Telomere Length ###
   ############  
     
-  # observe({
-  #   if(input$tabs == "Telomere Length") {
-  #     updateSliderInput(session, "poly", value = 3)
-  #   }
-  # })  
-  
-    
     # Insert Telomere Length Plots
     output$Telomere_Plots <- renderPlotly({
       Data <- Selected_Data()
@@ -1585,13 +1411,6 @@ shinyServer(function(input, output, session) {
   
   ### Copy Number ###
   ############   
-  
-  # Update DoF Slider
-  # observe({
-  #   if(input$tabs == "Copy Number") {
-  #     updateSliderInput(session, "poly", value = 3)
-  #   }
-  # })
   
   # Insert cf-DNA Plots
   output$CN_Plots <- renderPlotly({
@@ -1682,14 +1501,6 @@ shinyServer(function(input, output, session) {
   ### cf-DNA ###
   ############   
     
-    
-  # # Update DoF Slider
-  # observe({
-  #   if(input$tabs == "cell free DNA") {
-  #     updateSliderInput(session, "poly", value = 3)
-  #   }
-  # })
-  
     # Insert cf-DNA Plots
     output$cf_Plots <- renderPlotly({
       Data <- Selected_Data()
@@ -1770,13 +1581,6 @@ shinyServer(function(input, output, session) {
   
   #### IL-6 ###
   #############  
-  
-  # # Update DoF Slider
-  # observe({
-  #   if(input$tabs == "cell free IL-6") {
-  #     updateSliderInput(session, "poly", value = 3)
-  #   }
-  # })
   
   # Insert IL6 Plots
   output$IL6_Plots <- renderPlotly({
@@ -1942,14 +1746,6 @@ shinyServer(function(input, output, session) {
   ### Seahorse ###
   ############ 
     
-    # # Update DoF Slider
-    # observe({
-    #   if(input$tabs == "Seahorse Bioenergetics") {
-    #     updateSliderInput(session, "poly", value = 5)
-    #   }
-    #   else()
-    # })
-  
     #Parameter list
     output$ParameterSelector<-renderUI({
       selectInput('Parameter', 'Parameters',
@@ -2561,7 +2357,6 @@ shinyServer(function(input, output, session) {
   
   
   # Generate an HTML table view of the data
-  
   output$DataMatrix <- renderTable({
     metadata <- read.csv(paste0("downloadable_data/Cellular_lifespan_study_",Selected_Dataset(),".csv"))
     output_data <- Selected_Data()

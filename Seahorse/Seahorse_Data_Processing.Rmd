@@ -1,8 +1,8 @@
 ---
 title: "Seahorse_Data_Processing"
 author: "Gabriel Sturm"
-date: "7/1/2020"
-output: html_document
+date: "2020-07-01"
+output: html_document, csv, jpeg
 ---
 
 ```{r setup, include=FALSE}
@@ -23,8 +23,6 @@ When you click the **Knit** button a document will be generated that includes bo
 ### Set the below working directory to the location of that csv file
 ### Set the below filename to the name of that csv
 ### Set the date and experiment name
-
-
 ```{r loadData, echo=FALSE}
 dataDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/DATA/Data Seahorse/Lifespan Study/Part 2/Run 1 2018-08-30/"
 setwd(dataDir)
@@ -32,13 +30,6 @@ dir()
 
 #library(svDialogs)
 filename <- "Normalized_data_MI_Exp3_hFB12-13.csv"
-# form <- list(
-#   "File_Name" = "Data_Mi044.csv",
-#   "Date_of_Experiment" = "2020.07.06",
-#   "Experiment_Name" = "MiSBIE_Mi044")
-# form <- dlg_form(form, title = "Fill the form", message = NULL, columns = 1,
-#     strip.type = TRUE, gui = .GUI)
-#filename <- as.character(form$File_Name)
 Date_of_experiment <- "2020.07.21"
 Experiment_name <- "Mitotic_Inhibition_3_hFB12-13"
 Seahorse_data <- read.csv(filename)
@@ -47,21 +38,18 @@ head(Seahorse_data)
 ```
 
 
-## Organize data by injection strategy
-
-### Correct the number of each injection count below
-
+### Organize data by injection strategy
+## *Correct the number of each injection count below
 ```{r InjectionStrategy, echo=FALSE}
 Timepoints <- as.numeric(max(Seahorse_data$Measurement))
 print("Number of Timepoints:")
 Timepoints
 
-
-nBaselineMeasurements <- 3
-nExtraMeasurements <- 0
-nOligoMeasurements <- 3
-nFCCPMeasurements <- 3
-nRaMeasurements <- 3
+nBaselineMeasurements <- 3 # CHECK INJECTION STRATEGY
+nExtraMeasurements <- 0 # CHECK INJECTION STRATEGY
+nOligoMeasurements <- 3 # CHECK INJECTION STRATEGY
+nFCCPMeasurements <- 3 # CHECK INJECTION STRATEGY
+nRaMeasurements <- 3 # CHECK INJECTION STRATEGY
 
 
 sumMeasurements <- nBaselineMeasurements + nExtraMeasurements + nOligoMeasurements + nFCCPMeasurements + nRaMeasurements
@@ -106,7 +94,6 @@ vRaMeasurements
 
 
 ## Organize data by plate design
-
 ```{r plateDesign, echo=FALSE}
 Seahorse_data <- Seahorse_data[Seahorse_data$Group != "Background",]
 Groups <- as.character(unique(Seahorse_data$Group))
@@ -123,8 +110,6 @@ Seahorse_data
 
 
 ## Calculate MitoStress Test Parameters
-
-
 ```{r MitoStressParameters, echo=FALSE}
 
 CV_cutoff <- 50
@@ -322,9 +307,6 @@ MitoStress_Data
 
 
 ## Calculate ATPproduction Parameters
-
-You can also embed plots, for example:
-
 ```{r ATPParameters, echo=FALSE}
 ### Assumed Conditions
 Substrate <- "Glucose"
@@ -430,10 +412,7 @@ ATP_Data
 ```
 
 
-
 ## Combine and save all data
-
-
 ```{r finalData, echo=FALSE}
 
 all_data <- data.frame(rep(Date_of_experiment, nGroups), rep(Experiment_name, nGroups), MitoStress_Data, ATP_Data)
@@ -444,8 +423,6 @@ write.csv(all_data, paste0("Seahorse_Processed_Data_", filename))
 ```
 
 ## Plot Seahorse Traces
-
-
 ```{r plots, echo=FALSE}
 # Organize Seahorse data into mean groups/measurement values for trace plots
 plot_data <- as.data.frame(matrix(nrow=nGroups*Timepoints, ncol=9))

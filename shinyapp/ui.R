@@ -5,16 +5,7 @@ library("magrittr")
 library(plotly)
 library(Cairo)
 
-# library(rgl)
-# library(crosstalk)
-# library(manipulateWidget)
-# library(webshot)
-
-
-
-# # Define UI for application of Lifespan Study Data
-
-
+# Define UI for application of Lifespan Study Data
 fluidPage(
   
   tags$head(tags$style("
@@ -58,11 +49,6 @@ fluidPage(
       helpText("Type/Select one or more Treatments:"),
       uiOutput("TreatmentSelector"),
       
-      
-      # checkboxGroupInput("replicates", "Replicate: ",
-      #   choices = c(1,2,3),
-      #   selected = 1
-      # ),
       checkboxInput('legend', 'Show Legend', TRUE),
       
       helpText("Select one or more Experimental Replicates:"),
@@ -94,8 +80,6 @@ fluidPage(
                    c("None" = "none",
                      "Cell Line Group" = "cell_line",
                      "All stats" = "all")),
-      #checkboxInput('cell_line_text', 'Show Cell Line', TRUE),
-      #checkboxInput('fit_text', 'Show Fit Line Equation', FALSE),
       checkboxInput('se', 'Show Confidence Intervals', FALSE),
       
       sliderInput("poly", "Degrees of Freedom in Polynomial Fit:",
@@ -107,25 +91,6 @@ fluidPage(
       helpText("Type/Select which dataset to download:"),
       uiOutput("DatasetSelector"),
       downloadButton("downloadData", "Download selected Data"),
-      #br(), br(),
-      #actionButton("saveGraphs", "Save Plots")
-      #downloadButton("downloadGraphs", "Download all Graphs")
-      
-      # radioButtons("fileType", "Download Plot as:",
-      #              c("png" = "png",
-      #                "pdf" = "pdf",
-      #                "jpeg" = "jpeg",
-      #                "tiff" = "tiff"))
-      
-      # # Input: Simple integer interval ----
-      # helpText("Select Time Grown for Energy Phenotypes"),
-      # sliderInput("days_grown", "Days Grown:",
-      #             min = 0, max = 300,
-      #             value = 300),
-      
-      # animationOptions(interval = 10, loop = FALSE, playButton = TRUE,
-      #                  pauseButton = TRUE),
-      
 
     ),
     
@@ -136,28 +101,13 @@ fluidPage(
                  plotlyOutput("Growth_Plots"),
                  br(),
                  checkboxInput('adj_population_doublings', 'Correct population doublings for pre-study divisions based off MiAge Clock', FALSE),
-                 # column(11, align="right",
-                 # downloadButton("downloadPlot_Growth_Curve","Download Plot")),
-                 # br(),
-                 # br(),
-                 # verbatimTextOutput("Growth_DataPoint"),
                  br(),
                  plotlyOutput("Growth_Rate_Plots"),
                  br(),
                  plotlyOutput("Cell_Size_Plots"),
                  checkboxInput('diameter_conversion', 'Convert to diameter of cells', FALSE),
-                 # column(11, align="right",
-                 #        downloadButton("downloadPlot_Cell_Size","Download Plot")),
-                 # br(),
-                 # br(),
-                 # verbatimTextOutput("Size_DataPoint"),
                  br(),
                  plotlyOutput("Percent_Dead_Plots")
-                 # column(11, align="right",
-                 #       downloadButton("downloadPlot_Percent_Dead","Download Plot")),
-                 # br(),
-                 # br(),
-                 # verbatimTextOutput("Dead_DataPoint")
         ),
         tabPanel("DNA Methylation Age", id = "DNAmAge", 
                  helpText("Type/Select a DNAmAge Clock:"),
@@ -165,14 +115,6 @@ fluidPage(
                  br(), br(),
                  plotlyOutput("DNAmAge_Plots"), 
                  br()
-                 #  column(11, align="right",
-                 #      downloadButton("downloadPlot_DNAm","Download Plot")),
-                 #      
-                 #             #plotOutput("DNAmAge_BarPlot") 
-                 # 
-                 # br(),
-                 # br(),
-                 # verbatimTextOutput("DNAmAge_DataPoint")
         ),
         # tabPanel("DNA Methylation CpGs", id = "CpG",
         #          helpText("Type/Select a CpG:"),
@@ -199,10 +141,6 @@ fluidPage(
                  br(), br(),
                  plotlyOutput("RNA_Gene_Plot"),
                  br(), br(),
-                 #helpText("Type/Select a Transcript:"),
-                 #selectInput("Transcript", "Transcript", multiple = FALSE, choices = character(0)),
-                 #br(), br(),
-                 #plotlyOutput("RNA_Transcript_Plot"),
                  br(), br(),
                  
                  actionButton("PCA_button_2D_RNA", "Run Principal Component Analysis 2D"),
@@ -213,38 +151,21 @@ fluidPage(
                  br(),
                  plotlyOutput("PCA_Plot_3D_RNA"),
                  br()
-                 
-                 #verbatimTextOutput("Correlation_DataPoint"),
-                 #br(), br(), br(), br(), br(), br(), br()
-                 #helpText("3D PCA"),
-                 #rglwidgetOutput("PCA_3D_Plot", width = 800, height = 600)
         ),
         
         tabPanel("Telomere Length", id = "TL", 
                  plotlyOutput("Telomere_Plots"), 
                  br()
-                 # column(11, align="right",
-                 #        downloadButton("downloadPlot_TL","Download Plot")),
-                 # br(),
-                 # br(),
-                 # verbatimTextOutput("TL_DataPoint")
         ),
         tabPanel("Copy Number", id = "copy_number", 
                  plotlyOutput("CN_Plots"), 
                  br()
-                 # column(11, align="right",
-                 #        downloadButton("downloadPlot_Copy_Number","Download Plot")),
-                 # br(),
-                 # br(),
-                 # verbatimTextOutput("CN_DataPoint")
         ),
         tabPanel("mtDNA Deletions", id = "Deletions", 
                  helpText("Select mtDNA Deletion Parameter:"),
                  uiOutput("Deletions_ParameterSelector"),
                  plotlyOutput("Deletions_Plots"),
                  br(), br()
-                 # checkboxInput('Cytokine_norm', 'Normalize to Cells Counted at Passage', TRUE),
-                 # br()
         ),
         tabPanel("cell free DNA", id = "cf-DNA", 
                  radioButtons("cf-DNA", "Select DNA:",
@@ -256,22 +177,12 @@ fluidPage(
                  br(), br(),
                  checkboxInput('cf_norm', 'Normalize to Cells Counted at Passage', TRUE),
                  br()
-                 # column(11, align="right",
-                 #        downloadButton("downloadPlot_cfDNA","Download Plot")),
-                 # br(),
-                 # br(),
-                 # verbatimTextOutput("cfDNA_DataPoint")
         ),
         tabPanel("cell free IL-6", id = "IL6", 
                  plotlyOutput("IL6_Plots"), 
                  br(), br(),
                  checkboxInput('IL6_norm', 'Normalize to Cells Counted at Passage', TRUE),
                  br()
-                 # column(11, align="right",
-                 #        downloadButton("downloadPlot_IL6","Download Plot")),
-                 # br(),
-                 # br(),
-                 # verbatimTextOutput("IL6_DataPoint")
         ),
         tabPanel("Cytokines", id = "cytokines", 
                  helpText("Select Cytokine:"),
@@ -288,11 +199,6 @@ fluidPage(
                 br(), br(),
                 checkboxInput('Run_norm', 'Normalize out Plate-to-Plate Variation', FALSE),
                 br()
-                # column(11, align="right",
-                #        downloadButton("downloadPlot_Seahorse","Download Plot")),
-                # br(),
-                # br(),
-                # verbatimTextOutput("Seahorse_DataPoint")
         ),
         tabPanel("Correlations", id = "correlation", 
                  helpText("2D Correlation Plot"),

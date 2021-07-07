@@ -1,9 +1,12 @@
-########
-# Title: DNA Methylation Preprocessing Script
-# Author: Gabriel Sturm (adapted from Andres Cardenas)
-# Date: 2020-01-01
-# see MinFi pipeline: https://www.bioconductor.org/packages/release/workflows/vignettes/methylationArrayAnalysis/inst/doc/methylationArrayAnalysis.html
-#
+#####################################
+##
+## Title: DNA Methylation Preprocessing Script
+## Author: Gabriel Sturm (adapted from Andres Cardenas)
+## Date: 2020-01-01
+## see MinFi pipeline: https://www.bioconductor.org/packages/release/workflows/vignettes/methylationArrayAnalysis/inst/doc/methylationArrayAnalysis.html
+##
+##
+##
 
 ## Load packages needed
 R.version$version.string  
