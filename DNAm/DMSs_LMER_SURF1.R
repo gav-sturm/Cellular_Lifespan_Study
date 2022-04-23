@@ -2,6 +2,7 @@
 ##
 ## Title: DNA Methylation Linear Mixed Effects Modeling to obtain differntially methylated CpGs (DMSs)
 ## Author: Gabriel Sturm 
+## contact info: gs2934@cumc.columbia.edu
 ## Date: 2020-08-01
 ## see lme4 documentation: https://cran.r-project.org/web/packages/lme4/lme4.pdf
 ##

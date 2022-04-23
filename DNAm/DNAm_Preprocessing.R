@@ -2,6 +2,7 @@
 ##
 ## Title: DNA Methylation Preprocessing Script
 ## Author: Gabriel Sturm (adapted from Andres Cardenas)
+## contact info: gs2934@cumc.columbia.edu
 ## Date: 2020-01-01
 ## see MinFi pipeline: https://www.bioconductor.org/packages/release/workflows/vignettes/methylationArrayAnalysis/inst/doc/methylationArrayAnalysis.html
 ##

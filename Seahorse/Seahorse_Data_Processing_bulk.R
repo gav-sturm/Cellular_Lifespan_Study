@@ -2,6 +2,7 @@
 ##
 ## title: "Seahorse_Data_Processing_bluk"
 ## author: Gabriel (Gav) Sturm
+## contact info: gs2934@cumc.columbia.edu
 ## date: 2020-10-20
 ## output: CSV and JPEGs
 ##

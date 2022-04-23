@@ -1,6 +1,7 @@
 ---
 title: "Seahorse_Data_Processing"
 author: "Gabriel Sturm"
+contact info: gs2934@cumc.columbia.edu
 date: "2020-07-01"
 output: html_document, csv, jpeg
 ---

@@ -1,3 +1,13 @@
+#####################################
+##
+## Title: RNAseq txi import and normalization
+## Author: Gabriel Sturm 
+## contact info: gs2934@cumc.columbia.edu
+## Date: 2020-01-01
+## see txi import: https://bioconductor.org/packages/release/bioc/html/tximport.html
+##
+
+
 library('Rtsne')
 library('viridis')
 library('ggplot2')

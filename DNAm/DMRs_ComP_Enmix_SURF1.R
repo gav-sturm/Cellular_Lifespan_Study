@@ -2,6 +2,7 @@
 ##
 ## Title: DNA Methylation CombP to obtain differntially methylated regions (DMRs)
 ## Author: Gabriel Sturm 
+## contact info: gs2934@cumc.columbia.edu
 ## Date: 2020-10-01
 ## see ENmix documentation: https://rdrr.io/bioc/ENmix/f/inst/doc/ENmix.pdf
 ##

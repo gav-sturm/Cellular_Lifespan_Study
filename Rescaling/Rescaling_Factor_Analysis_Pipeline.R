@@ -1,3 +1,13 @@
+#####################################
+##
+## Title: Rescaling factor analysis for MR aging manuscript
+## Author: Gabriel (Gav) Sturm
+## Contact Info: gs2934@cumc.columbia.edu
+## Date: 2021-01-01
+## 
+##
+##
+
 # rm(list = ls())
 # gc()
 # .rs.restartR()
@@ -19,20 +29,23 @@ library(GEOquery)
 library(robustbase)
 library(miceadds)
 
-baseDir<- c("/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/Modeling_Chris_Kempes/")
+baseDir<- c("/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/Modeling_Chris_Kempes/")
 setwd(baseDir)
 dir()
 
 ######## PART 0 - Data Wrangling ########
 
 # Lifespan Metadata
+shinyDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/shinyapp/"
+setwd(shinyDir)
+LS_Data <- read.csv('Lifespan_Study_Data.csv')
+LS_Data[is.na(LS_Data)] <- ""
+LS_Data$Days_Grown <- as.numeric(LS_Data$Days_Grown)
 setwd(baseDir)
-LS_Data <- read.csv('Cellular_Lifespan/Lifespan_Study_Data.csv')
-
 
 ##### Fibroblasts Controls r1 DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -73,7 +86,7 @@ write.csv(control_fibroblasts_r1_metadata,"Cellular_Lifespan/DNAm/Control_Fibrob
 
 ##### Fibroblasts Controls r1 early-phase DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -114,7 +127,7 @@ write.csv(control_fibroblasts_r1_earlyPhase_metadata,"Cellular_Lifespan/DNAm/Con
 
 ##### Fibroblasts Controls r1 mid-phase DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -155,7 +168,7 @@ write.csv(control_fibroblasts_r1_midPhase_metadata,"Cellular_Lifespan/DNAm/Contr
 
 ##### Fibroblasts Controls r1 senescent-phase DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -196,7 +209,7 @@ write.csv(control_fibroblasts_r1_senescentPhase_metadata,"Cellular_Lifespan/DNAm
 
 ##### Fibroblasts Controls r2 DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -236,7 +249,7 @@ write.csv(control_fibroblasts_r2_metadata,"Cellular_Lifespan/DNAm/Control_Fibrob
 
 ##### Fibroblasts Controls r3 DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -274,10 +287,50 @@ save(control_fibroblasts_r3_betas,file="Cellular_Lifespan/DNAm/Control_Fibroblas
 write.csv(control_fibroblasts_r3_metadata,"Cellular_Lifespan/DNAm/Control_Fibroblasts_r3_metadata.csv")
 #######
 
+##### Fibroblasts Controls r3 earlyPhase DNAm ######
+# Load in fibroblast DNAm data
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+setwd(baseDir2)
+dir()
+load("Combat_Betas.RData")
+# Filter Lifespan Data to hFB12,13,14 
+selected_cell_lines <- c("hFB12","hFB13")
+filtered_fbr_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
+filtered_fbr_metadata <-  filtered_fbr_metadata[filtered_fbr_metadata$Treatment == "Control_21",]
+filtered_fbr_metadata <-  filtered_fbr_metadata[filtered_fbr_metadata$Days_Grown > 25 & filtered_fbr_metadata$Days_Grown < 95,]
+filtered_fbr_metadata <-  filtered_fbr_metadata[filtered_fbr_metadata$Study_Part %in% c(4),]
+filtered_fbr_metadata <-  filtered_fbr_metadata[filtered_fbr_metadata$basename != "",]
+filtered_fbr_metadata$basename
+nrow(filtered_fbr_metadata)
+# Retrieve TPM for control and Oligo samples
+filtered_fbr_betas <- betas[,colnames(betas) %in% as.vector(filtered_fbr_metadata$basename)]
+# Order betas in same order as Lifespan Data
+filtered_fbr_betas <- filtered_fbr_betas[,match(filtered_fbr_metadata$basename, colnames(filtered_fbr_betas))]
+fibroblast_timepoints <- filtered_fbr_metadata$Days_Grown
+# convert days grown to years
+Timepoints_years <- fibroblast_timepoints / 365
+filtered_fbr_metadata <- data.frame(filtered_fbr_metadata, Timepoints_years)
+## Check values match
+all(colnames(filtered_fbr_betas)==filtered_fbr_metadata$basename)
+identical(colnames(filtered_fbr_betas),as.character(filtered_fbr_metadata$basename))
+
+filtered_fbr_betas[1:5,1:5]
+dim(filtered_fbr_betas)
+max(filtered_fbr_betas)
+min(filtered_fbr_betas)
+hist(as.matrix(filtered_fbr_betas), main="Fibroblasts Controls DNAm Histogram", xlab = "beta", breaks = 100)
+
+# Save Data
+setwd(baseDir)
+control_fibroblasts_r3_betas <- filtered_fbr_betas
+control_fibroblasts_r3_metadata <- filtered_fbr_metadata
+save(control_fibroblasts_r3_betas,file="Cellular_Lifespan/DNAm/Control_Fibroblasts_r3_earlyPhase_betas.RData")
+write.csv(control_fibroblasts_r3_metadata,"Cellular_Lifespan/DNAm/Control_Fibroblasts_r3_earlyPhase_metadata.csv")
+#######
 
 ##### Fibroblasts Contact Inhibition DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -318,7 +371,7 @@ write.csv(filtered_fbr_metadata, "Cellular_Lifespan/DNAm/Contact_Inhibition_Fibr
 
 ##### Fibroblasts Contact Inhibition earlyPhase DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -360,7 +413,7 @@ write.csv(filtered_fbr_metadata, "Cellular_Lifespan/DNAm/Contact_Inhibition_earl
 
 ##### Fibroblasts Contact Inhibition latePhase DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -402,7 +455,7 @@ write.csv(filtered_fbr_metadata, "Cellular_Lifespan/DNAm/Contact_Inhibition_late
 
 ##### Fibroblasts Hypoxia DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -444,7 +497,7 @@ write.csv(hypoxia_DNAm_metadata, "Cellular_Lifespan/DNAm/Hypoxia_Fibroblasts_met
 
 ##### Fibroblasts DEX earlyPhase DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -484,7 +537,7 @@ write.csv(DEX_DNAm_metadata, "Cellular_Lifespan/DNAm/DEX_earlyPhase_Fibroblasts_
 
 ##### Fibroblasts Controls r1-treatments DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -525,7 +578,7 @@ write.csv(control_fibroblasts_r1_earlyPhase_metadata,"Cellular_Lifespan/DNAm/Con
 
 ##### Fibroblasts Modulators earlyPhase DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -565,7 +618,7 @@ write.csv(modulators_DNAm_metadata, "Cellular_Lifespan/DNAm/Modulators_earlyPhas
 
 ##### Fibroblasts Oligo earlyPhase DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -605,7 +658,7 @@ write.csv(oligo_DNAm_metadata, "Cellular_Lifespan/DNAm/Oligo_earlyPhase_Fibrobla
 
 ##### Fibroblasts SURF1 earlyPhase DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -645,7 +698,7 @@ write.csv(SURF1_DNAm_metadata, "Cellular_Lifespan/DNAm/SURF1_earlyPhase_Fibrobla
 
 ##### Fibroblasts 2-Deoxyglucose DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -684,7 +737,7 @@ write.csv(deoxyglucose_DNAm_metadata, "Cellular_Lifespan/DNAm/Deoxyglucose_Fibro
 
 ##### HEK293 DNAm ######
 # Load in fibroblast DNAm data
-baseDir2 <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
+baseDir2 <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Preprocessing/data/"
 setwd(baseDir2)
 dir()
 load("Combat_Betas.RData")
@@ -734,6 +787,14 @@ write.csv(HEK293_metadata, "Cellular_Lifespan/DNAm/HEK293_metadata.csv")
 # hist(twinsUK_skin_DNAm_betas, main="twinsUK Skin DNAm Histogram", xlab = "beta", breaks = 100)
 # dim(twinsUK_skin_DNAm_betas)
 # save(twinsUK_skin_DNAm_betas,file="TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_betas.RData")
+setwd(baseDir)
+ls()
+load("TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_betas.RData")
+# Metadata
+read.csv("TwinkUK/DNAm_GEO_metadata")
+# overlaps of EPIC and 450k
+length(rownames(twinsUK_skin_DNAm_betas))
+length(rownames(twinsUK_skin_DNAm_betas) %in% rownames(betas)) # 450,531
 
 #######
 
@@ -770,7 +831,7 @@ save(MESA_RNAseq_data,file="MESA/RNAarray/MESA_RNAseq_data.RData")
 
 ##### Fibroblasts Controls r1 RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -783,8 +844,9 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(1,2),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
+table(filtered_metadata$Cell_Line_Group)
 nrow(filtered_metadata)
 min(filtered_metadata$Days_Grown)
 max(filtered_metadata$Days_Grown)
@@ -816,7 +878,7 @@ write.csv(control_fibroblasts_r1_RNAseq_metadata,"Cellular_Lifespan/RNAseq/contr
 
 ##### Fibroblasts Controls r1-linear RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -829,7 +891,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(1,2),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown < 90,]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
@@ -863,7 +925,7 @@ write.csv(control_fibroblasts_r1_RNAseq_metadata,"Cellular_Lifespan/RNAseq/contr
 
 ##### Fibroblasts Controls r1-senescent RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -876,7 +938,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(1,2),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown > 90,]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
@@ -908,7 +970,7 @@ write.csv(control_fibroblasts_r1_RNAseq_metadata,"Cellular_Lifespan/RNAseq/contr
 
 ##### Fibroblasts Controls r1 earlyPhase RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -921,7 +983,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(1,2),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown > 15 & filtered_metadata$Days_Grown < 60,]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
@@ -955,7 +1017,7 @@ write.csv(control_fibroblasts_r1_RNAseq_metadata,"Cellular_Lifespan/RNAseq/contr
 
 ##### Fibroblasts Controls r1 midPhase RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -968,7 +1030,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(1,2),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown >= 60 & filtered_metadata$Days_Grown < 110,]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
@@ -1002,7 +1064,7 @@ write.csv(control_fibroblasts_r1_RNAseq_metadata,"Cellular_Lifespan/RNAseq/contr
 
 ##### Fibroblasts Controls r1 senescentPhase RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1015,7 +1077,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(1,2),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown >=  110,]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
@@ -1049,7 +1111,7 @@ write.csv(control_fibroblasts_r1_RNAseq_metadata,"Cellular_Lifespan/RNAseq/contr
 
 ##### Fibroblasts Controls r1 treatments RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1062,7 +1124,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(1,2),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown > 25 & filtered_metadata$Days_Grown < 95,]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
@@ -1096,7 +1158,7 @@ write.csv(control_fibroblasts_r1_RNAseq_metadata,"Cellular_Lifespan/RNAseq/contr
 
 ##### Fibroblasts Controls r2 RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1109,7 +1171,7 @@ selected_cell_lines <- c("hFB11","hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(3),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 filtered_genes <- fibroblast_rnaseq_data[,colnames(fibroblast_rnaseq_data) %in% as.vector(filtered_metadata$RNAseq_ID)]
@@ -1140,7 +1202,7 @@ write.csv(control_fibroblasts_r2_RNAseq_metadata,"Cellular_Lifespan/RNAseq/contr
 
 ##### Fibroblasts Controls r3 RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1153,7 +1215,7 @@ selected_cell_lines <- c("hFB13")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(4),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 filtered_genes <- fibroblast_rnaseq_data[,colnames(fibroblast_rnaseq_data) %in% as.vector(filtered_metadata$RNAseq_ID)]
@@ -1184,7 +1246,7 @@ write.csv(control_fibroblasts_r3_RNAseq_metadata,"Cellular_Lifespan/RNAseq/contr
 
 ##### Fibroblasts Controls r3 earlyPhase RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1197,8 +1259,8 @@ selected_cell_lines <- c("hFB13")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(4),]
-filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown > 10 & filtered_metadata$Days_Grown < 75,]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown > 25 & filtered_metadata$Days_Grown < 95,]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 filtered_genes <- fibroblast_rnaseq_data[,colnames(fibroblast_rnaseq_data) %in% as.vector(filtered_metadata$RNAseq_ID)]
@@ -1229,7 +1291,7 @@ write.csv(control_fibroblasts_r3_RNAseq_metadata,"Cellular_Lifespan/RNAseq/contr
 
 ##### Fibroblasts Controls r3 earlyPhase13 RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1244,7 +1306,7 @@ filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(4),]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown > 10 & filtered_metadata$Days_Grown < 75,]
 filtered_metadata <- filtered_metadata[filtered_metadata$Passage %in% c(5,7,9,11,13),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 filtered_genes <- fibroblast_rnaseq_data[,colnames(fibroblast_rnaseq_data) %in% as.vector(filtered_metadata$RNAseq_ID)]
@@ -1275,7 +1337,7 @@ write.csv(control_fibroblasts_r3_RNAseq_metadata,"Cellular_Lifespan/RNAseq/contr
 
 ##### Fibroblasts Contact Inhibition RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1290,7 +1352,7 @@ filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Contact_
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(3),]
 filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$Time_Point),]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Time_Point > 0,]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 min(filtered_metadata$Days_Grown)
@@ -1322,7 +1384,7 @@ write.csv(contact_inhibition_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAs
 
 ##### Fibroblasts Contact Inhibition earlyPhase RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1335,7 +1397,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB11")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Contact_Inhibition_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(3),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$Time_Point),]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Time_Point > 20 & filtered_metadata$Time_Point < 100,]
 filtered_metadata$RNAseq_ID
@@ -1369,7 +1431,7 @@ write.csv(contact_inhibition_earlyPhase_fibroblasts_RNAseq_metadata,"Cellular_Li
 
 ##### Fibroblasts Contact Inhibition latePhase RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1382,7 +1444,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB11")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Contact_Inhibition_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(1,2,3),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$Time_Point),]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Time_Point > 80,]
 filtered_metadata$RNAseq_ID
@@ -1416,7 +1478,7 @@ write.csv(contact_inhibition_latePhase_fibroblasts_RNAseq_metadata,"Cellular_Lif
 
 ##### Fibroblasts Hypoxia RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1430,7 +1492,7 @@ filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatments == "Control",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Percent_Oxygen == 3,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(1,2,3),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 min(filtered_metadata$Days_Grown)
@@ -1463,7 +1525,7 @@ write.csv(hypoxia_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAseq/hypoxia_
 
 ##### Fibroblasts Hypoxia + Contact Inhibition RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1477,7 +1539,7 @@ filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatments == "Contact_Inhibition",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Percent_Oxygen == 3,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(1,2,3),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 # Retrieve TPM for control and Oligo samples
@@ -1507,7 +1569,7 @@ write.csv(hypoxia_contact_inhibition_fibroblasts_RNAseq_metadata,"Cellular_Lifes
 
 ##### Fibroblasts Controls DEX RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1520,7 +1582,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "DEX_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(1,2),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 filtered_genes <- fibroblast_rnaseq_data[,colnames(fibroblast_rnaseq_data) %in% as.vector(filtered_metadata$RNAseq_ID)]
@@ -1551,7 +1613,7 @@ write.csv(dex_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAseq/dex_fibrobla
 
 ##### Fibroblasts Controls DEX earlyPhase RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1565,7 +1627,7 @@ filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "DEX_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(1,2),]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown > 25 & filtered_metadata$Days_Grown < 95,]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 filtered_genes <- fibroblast_rnaseq_data[,colnames(fibroblast_rnaseq_data) %in% as.vector(filtered_metadata$RNAseq_ID)]
@@ -1596,7 +1658,7 @@ write.csv(dex_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAseq/dex_earlyPha
 
 ##### Fibroblasts SURF1 RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1609,7 +1671,7 @@ selected_cell_lines <- c("hFB6","hFB7","hFB8")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(2),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 # Retrieve TPM for control and Oligo samples
@@ -1639,7 +1701,7 @@ write.csv(surf1_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAseq/surf1_fibr
 
 ##### Fibroblasts SURF1 earlyPhase RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1653,7 +1715,7 @@ filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Control_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown > 25 & filtered_metadata$Days_Grown < 95,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(2),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 # Retrieve TPM for control and Oligo samples
@@ -1683,7 +1745,7 @@ write.csv(surf1_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAseq/surf1_earl
 
 ##### Fibroblasts Oligomycin RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1696,7 +1758,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Oligomycin_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(2),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 # Retrieve TPM for control and Oligo samples
@@ -1726,7 +1788,7 @@ write.csv(oligo_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAseq/oligo_fibr
 
 ##### Fibroblasts Oligomycin earlyPhase RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1740,7 +1802,7 @@ filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Oligomycin_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(2),]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown > 25 & filtered_metadata$Days_Grown < 95,]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 # Retrieve TPM for control and Oligo samples
@@ -1770,7 +1832,7 @@ write.csv(oligomycin_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAseq/oligo
 
 ##### Fibroblasts Modulators RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1783,7 +1845,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Modulators_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(2),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 # Retrieve TPM for control and Oligo samples
@@ -1813,7 +1875,7 @@ write.csv(modulators_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAseq/modul
 
 ##### Fibroblasts Modulators earlyPhase RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1827,7 +1889,7 @@ filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Modulators_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(2),]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown > 25 & filtered_metadata$Days_Grown < 95,]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 # Retrieve TPM for control and Oligo samples
@@ -1857,7 +1919,7 @@ write.csv(modulators_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAseq/modul
 
 ##### Fibroblasts 2-deoxyglucose RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1870,7 +1932,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "2-Deoxyglucose_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(4),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 # Retrieve TPM for control and Oligo samples
@@ -1900,7 +1962,7 @@ write.csv(deoxyglucose_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAseq/deo
 
 ##### Fibroblasts 2-deoxyglucose earlyPhase RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1914,7 +1976,7 @@ filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "2-Deoxyglucose_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(4),]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown > 25 & filtered_metadata$Days_Grown < 95,]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 # Retrieve TPM for control and Oligo samples
@@ -1944,7 +2006,7 @@ write.csv(deoxyglucose_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAseq/deo
 
 ##### Fibroblasts 2-deoxyglucose earlyPhase-hFB13 RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -1958,7 +2020,7 @@ filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "2-Deoxyglucose_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(4),]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Days_Grown > 10 & filtered_metadata$Days_Grown < 75,]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 # Retrieve TPM for control and Oligo samples
@@ -1988,7 +2050,7 @@ write.csv(deoxyglucose_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNAseq/deo
 
 ##### Fibroblasts betahydroxybutyrate RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -2001,7 +2063,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "betahydroxybutyrate_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(4),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 # Retrieve TPM for control and Oligo samples
@@ -2031,7 +2093,7 @@ write.csv(betahydroxybutyrate_fibroblasts_RNAseq_metadata,"Cellular_Lifespan/RNA
 
 ##### Fibroblasts Galactose RNAseq ######
 # Load in fibroblast RNAseq data
-genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
 setwd(genewizDir)
 fibroblast_rnaseq_data <- as.matrix(read.csv("allRNA_Gene_RNAseq_data_no_cutoff.csv", row.names = 1))
 # Rename Samples
@@ -2044,7 +2106,7 @@ selected_cell_lines <- c("hFB12","hFB13","hFB14")
 filtered_metadata <- LS_Data[LS_Data$Cell_Line %in% selected_cell_lines,]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Treatment == "Galactose_21",]
 filtered_metadata <-  filtered_metadata[filtered_metadata$Study_Part %in% c(4),]
-filtered_metadata <-  filtered_metadata[!is.na(filtered_metadata$RNAseq_ID),]
+filtered_metadata <-  filtered_metadata[filtered_metadata$RNAseq_ID != "",]
 filtered_metadata$RNAseq_ID
 nrow(filtered_metadata)
 # Retrieve TPM for control and Oligo samples
@@ -2348,11 +2410,32 @@ write.csv(Tabula_Muris_metadata,"Tabula_Muris/Tabula_Muris_RNAseq_metadata.csv")
 GTEx_metadata <- read.csv("GTEx/GTEx_metadata.csv",row.names=1)
 head(GTEx_metadata)
 dim(GTEx_metadata)
+
+min(GTEx_metadata$AGE)
+max(GTEx_metadata$AGE)
+
+table(GTEx_metadata$ETHNCTY)
+table(GTEx_metadata$RACE)
+table(GTEx_metadata$SEX)
+
 # load in samples info
 GTEx_sample_info <- read.csv("GTEx/GTEx_sample_info.csv",row.names=1)
 head(GTEx_sample_info)
 dim(GTEx_sample_info)
 table(GTEx_sample_info$Note)
+
+# metadata for Skin - sun exposed
+GTEx_skin_sample_info <- GTEx_sample_info[GTEx_sample_info$Note == "Skin - Sun Exposed (Lower leg)",]
+nrow(GTEx_skin_sample_info) # 520
+
+ids <- substring(rownames(GTEx_skin_sample_info),1,sapply(str_locate_all(rownames(GTEx_skin_sample_info),"-"), "[[", 2)-1)
+GTEx_skin_metadata <- GTEx_metadata[GTEx_metadata$SUBJID %in% ids,]
+nrow(GTEx_skin_metadata)
+table(GTEx_skin_metadata$SEX)
+min(GTEx_skin_metadata$AGE)
+max(GTEx_skin_metadata$AGE)
+table(GTEx_skin_metadata$RACE)
+table(GTEx_skin_metadata$ETHNCTY)
 # load in data
 #library(Rgraphviz) # BiocManager::install("Rgraphviz")
 #library(CePa)
@@ -2925,6 +3008,22 @@ head(results)
 dim(results)
 ##########
 
+# Linear Model for Control Fibroblasts r3 earlyPhase DNAm ###
+##########
+load("Cellular_Lifespan/DNAm/Control_Fibroblasts_r3_earlyPhase_betas.RData")
+control_fibroblasts_r3_betas[1:5,1:5]
+control_fibroblasts_r3_metadata <- read.csv("Cellular_Lifespan/DNAm/Control_Fibroblasts_r3_earlyPhase_metadata.csv")
+nrow(control_fibroblasts_r3_metadata)
+control_fibroblasts_r3_metadata[1:5,1:5]
+identical(colnames(control_fibroblasts_r3_betas),as.character(control_fibroblasts_r3_metadata$basename))
+timepoints <- control_fibroblasts_r3_metadata$Timepoints_years
+cell_lines <- control_fibroblasts_r3_metadata$Cell_Line
+filename <- "Cellular_Lifespan/DNAm/control_fibroblasts_r3_earlyPhase_linear_results.csv"
+results <- linear_function(control_fibroblasts_r3_betas,timepoints,filename)
+head(results)
+dim(results)
+##########
+
 # Linear Model for Contact Inhibited Fibroblasts DNAm
 ##########
 setwd(baseDir)
@@ -3154,6 +3253,32 @@ dim(twinsUK_skin_DNAm_betas)
 print(identical(colnames(twinsUK_skin_DNAm_betas), as.character(twinsUK_skin_DNAm_metadata$X)))
 filename <- "TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_minmax_results.csv"
 results <- MinMax_function(twinsUK_skin_DNAm_betas,timepoints,filename)
+head(results)
+dim(results)
+##########
+
+
+# LMER  Model for TwinsUK Skin DNAm
+##########
+load("TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_betas.RData")
+twinsUK_skin_DNAm_betas[1:5,1:5]
+dim(twinsUK_skin_DNAm_betas)
+twinsUK_skin_DNAm_metadata <- read.csv("TwinsUK/DNAm_Skin/DNAm_GEO_metadata.csv")
+twinsUK_skin_DNAm_metadata[1:5,1:5]
+identical(colnames(twinsUK_skin_DNAm_betas),as.character(twinsUK_skin_DNAm_metadata$X))
+timepoints <- twinsUK_skin_DNAm_metadata$age.at.biopsy.ch1
+length(timepoints) == ncol(twinsUK_skin_DNAm_betas)
+twins <- twinsUK_skin_DNAm_metadata$relatedness.identification.id.ch1
+# limit to significant sites from linear model
+linear_results <- read.csv('TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_linear_results.csv')
+sig_genes <- linear_results[linear_results$fdr < 0.05,]$molecule
+length(sig_genes)
+twinsUK_skin_DNAm_betas <- twinsUK_skin_DNAm_betas[rownames(twinsUK_skin_DNAm_betas) %in% sig_genes,]
+dim(twinsUK_skin_DNAm_betas)
+print(identical(colnames(twinsUK_skin_DNAm_betas), as.character(twinsUK_skin_DNAm_metadata$X)))
+random_effect <- twinsUK_skin_DNAm_metadata$smoking.status.ch1
+filename <- "TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_lmer_results.csv"
+results <- lmer_function(twinsUK_skin_DNAm_betas,timepoints,random_effect,filename)
 head(results)
 dim(results)
 ##########
@@ -4712,14 +4837,14 @@ datasets <- addMetdata(ds,specs)
 ##### DNAm - treatments #####
 main_DNAm_comparison <- 'TwinsUK_Skin_DNAm_linearRegression'
 #main_DNAm_comparison <- 'TwinsUK_Skin_DNAm_permutation'
-ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r1_linear_results.csv")
-specs <- c('Control_Fibroblasts_r1_DNAm','all',38,'Human',
-           'Primary_Cell_Culture','Cellular_Lifespan','Fibroblasts',
-           'DNAmethylation','EPICarray','Control','Healthy','linearRegression',
-           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_betas.RData',
-           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_metadata.csv')
-datasets <- addMetdata(ds,specs)
-
+# ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r1_linear_results.csv")
+# specs <- c('Control_Fibroblasts_r1_DNAm','all',38,'Human',
+#            'Primary_Cell_Culture','Cellular_Lifespan','Fibroblasts',
+#            'DNAmethylation','EPICarray','Control','Healthy','linearRegression',
+#            'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_betas.RData',
+#            'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_metadata.csv')
+# datasets <- addMetdata(ds,specs)
+# 
 ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r2_linear_results.csv")
 specs <- c('Control_Fibroblasts_r2_DNAm',main_DNAm_comparison,23,'Human',
            'Primary_Cell_Culture','Cellular_Lifespan','Fibroblasts',
@@ -4728,37 +4853,37 @@ specs <- c('Control_Fibroblasts_r2_DNAm',main_DNAm_comparison,23,'Human',
            'Cellular_Lifespan/DNAm/Control_Fibroblasts_r2_metadata.csv')
 datasets <- addMetdata(ds,specs)
 
-ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r3_linear_results.csv")
-specs <- c('Control_Fibroblasts_r3_DNAm',main_DNAm_comparison,18,'Human',
+ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r3_earlyPhase_linear_results.csv")
+specs <- c('Control_Fibroblasts_r3_earlyPhase_DNAm',main_DNAm_comparison,10,'Human',
            'Primary_Cell_Culture','Cellular_Lifespan','Fibroblasts',
            'DNAmethylation','EPICarray','Control','Healthy','linearRegression',
-           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r3_betas.RData',
-           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r3_metadata.csv')
+           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r3_earlyPhase_betas.RData',
+           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r3_earlyPhase_metadata.csv')
 datasets <- addMetdata(ds,specs)
-
-ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r1_earlyPhase_linear_results.csv")
-specs <- c('Control_Fibroblasts_r1_earlyPhase_DNAm',main_DNAm_comparison,12,'Human',
-           'Primary_Cell_Culture','Cellular_Lifespan','Fibroblasts',
-           'DNAmethylation','EPICarray','Control','Healthy','linearRegression',
-           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_earlyPhase_betas.RData',
-           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_earlyPhase_metadata.csv')
-datasets <- addMetdata(ds,specs)
-
-ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r1_midPhase_linear_results.csv")
-specs <- c('Control_Fibroblasts_r1_midPhase_DNAm',main_DNAm_comparison,11,'Human',
-           'Primary_Cell_Culture','Cellular_Lifespan','Fibroblasts',
-           'DNAmethylation','EPICarray','Control','Healthy','linearRegression',
-           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_midPhase_betas.RData',
-           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_midPhase_metadata.csv')
-datasets <- addMetdata(ds,specs)
-
-ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r1_senescentPhase_linear_results.csv")
-specs <- c('Control_Fibroblasts_r1_senescentPhase_DNAm',main_DNAm_comparison,12,'Human',
-           'Primary_Cell_Culture','Cellular_Lifespan','Fibroblasts',
-           'DNAmethylation','EPICarray','Control','Healthy','linearRegression',
-           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_senescentPhase_betas.RData',
-           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_senescentPhase_metadata.csv')
-datasets <- addMetdata(ds,specs)
+# 
+# ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r1_earlyPhase_linear_results.csv")
+# specs <- c('Control_Fibroblasts_r1_earlyPhase_DNAm',main_DNAm_comparison,12,'Human',
+#            'Primary_Cell_Culture','Cellular_Lifespan','Fibroblasts',
+#            'DNAmethylation','EPICarray','Control','Healthy','linearRegression',
+#            'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_earlyPhase_betas.RData',
+#            'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_earlyPhase_metadata.csv')
+# datasets <- addMetdata(ds,specs)
+# 
+# ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r1_midPhase_linear_results.csv")
+# specs <- c('Control_Fibroblasts_r1_midPhase_DNAm',main_DNAm_comparison,11,'Human',
+#            'Primary_Cell_Culture','Cellular_Lifespan','Fibroblasts',
+#            'DNAmethylation','EPICarray','Control','Healthy','linearRegression',
+#            'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_midPhase_betas.RData',
+#            'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_midPhase_metadata.csv')
+# datasets <- addMetdata(ds,specs)
+# 
+# ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r1_senescentPhase_linear_results.csv")
+# specs <- c('Control_Fibroblasts_r1_senescentPhase_DNAm',main_DNAm_comparison,12,'Human',
+#            'Primary_Cell_Culture','Cellular_Lifespan','Fibroblasts',
+#            'DNAmethylation','EPICarray','Control','Healthy','linearRegression',
+#            'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_senescentPhase_betas.RData',
+#            'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_senescentPhase_metadata.csv')
+# datasets <- addMetdata(ds,specs)
 
 ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r1_treatments_linear_results.csv")
 specs <- c('Control_Fibroblasts_r1_treatments_DNAm',main_DNAm_comparison,15,'Human',
@@ -4834,12 +4959,12 @@ specs <- c('Control_Fibroblasts_r1_RNAseq','all',29,'Human','Primary_Cell_Cultur
            'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_RNAseq_metadata.csv')
 datasets <- addMetdata(ds,specs)
 
-ds <- read.csv("Cellular_Lifespan/RNAseq/control_fibroblasts_r1_earlyPhase_RNAseq_linear_results.csv")
-specs <- c('Control_Fibroblasts_r1_earlyPhase_RNAseq',main_RNAseq_comparison,9,'Human','Primary_Cell_Culture',
-           'Cellular_Lifespan','Fibroblasts','Transcriptomics','RNAseq','Control','Healthy','linearRegression',
-           'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_earlyPhase_RNAseq_genes.RData',
-           'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_earlyPhase_RNAseq_metadata.csv')
-datasets <- addMetdata(ds,specs)
+# ds <- read.csv("Cellular_Lifespan/RNAseq/control_fibroblasts_r1_earlyPhase_RNAseq_linear_results.csv")
+# specs <- c('Control_Fibroblasts_r1_earlyPhase_RNAseq',main_RNAseq_comparison,9,'Human','Primary_Cell_Culture',
+#            'Cellular_Lifespan','Fibroblasts','Transcriptomics','RNAseq','Control','Healthy','linearRegression',
+#            'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_earlyPhase_RNAseq_genes.RData',
+#            'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_earlyPhase_RNAseq_metadata.csv')
+# datasets <- addMetdata(ds,specs)
 
 ds <- read.csv("Cellular_Lifespan/RNAseq/control_fibroblasts_r2_RNAseq_linear_results.csv")
 specs <- c('Control_Fibroblasts_r2_RNAseq',main_RNAseq_comparison,16,'Human','Primary_Cell_Culture',
@@ -4847,27 +4972,27 @@ specs <- c('Control_Fibroblasts_r2_RNAseq',main_RNAseq_comparison,16,'Human','Pr
            'Cellular_Lifespan/RNAseq/control_fibroblasts_r2_RNAseq_genes.RData',
            'Cellular_Lifespan/RNAseq/control_fibroblasts_r2_RNAseq_metadata.csv')
 datasets <- addMetdata(ds,specs)
-
-ds <- read.csv("Cellular_Lifespan/RNAseq/control_fibroblasts_r3_RNAseq_linear_results.csv")
-specs <- c('Control_Fibroblasts_r3_RNAseq',main_RNAseq_comparison,19,'Human','Primary_Cell_Culture','Cellular_Lifespan',
+# 
+ds <- read.csv("Cellular_Lifespan/RNAseq/control_fibroblasts_r3_earlyPhase_RNAseq_linear_results.csv")
+specs <- c('Control_Fibroblasts_r3_earlyPhase_RNAseq',main_RNAseq_comparison,9,'Human','Primary_Cell_Culture','Cellular_Lifespan',
            'Fibroblasts','Transcriptomics','RNAseq','Control','Healthy','linearRegression',
-           'Cellular_Lifespan/RNAseq/control_fibroblasts_r3_RNAseq_genes.RData',
-           'Cellular_Lifespan/RNAseq/control_fibroblasts_r3_RNAseq_metadata.csv')
+           'Cellular_Lifespan/RNAseq/control_fibroblasts_r3_earlyPhase_RNAseq_genes.RData',
+           'Cellular_Lifespan/RNAseq/control_fibroblasts_r3_earlyPhase_RNAseq_metadata.csv')
 datasets <- addMetdata(ds,specs)
-
-ds <- read.csv("Cellular_Lifespan/RNAseq/control_fibroblasts_r1_midPhase_RNAseq_linear_results.csv")
-specs <- c('Control_Fibroblasts_r1_midPhase_RNAseq',main_RNAseq_comparison,9,'Human','Primary_Cell_Culture',
-           'Cellular_Lifespan','Fibroblasts','Transcriptomics','RNAseq','Control','Healthy','linearRegression',
-           'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_midPhase_RNAseq_genes.RData',
-           'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_midPhase_RNAseq_metadata.csv')
-datasets <- addMetdata(ds,specs)
-
-ds <- read.csv("Cellular_Lifespan/RNAseq/control_fibroblasts_r1_senescentPhase_RNAseq_linear_results.csv")
-specs <- c('Control_Fibroblasts_r1_senescentPhase_RNAseq',main_RNAseq_comparison,11,'Human','Primary_Cell_Culture',
-           'Cellular_Lifespan','Fibroblasts','Transcriptomics','RNAseq','Control','Healthy','linearRegression',
-           'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_senescentPhase_RNAseq_genes.RData',
-           'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_senescentPhase_RNAseq_metadata.csv')
-datasets <- addMetdata(ds,specs)
+# 
+# ds <- read.csv("Cellular_Lifespan/RNAseq/control_fibroblasts_r1_midPhase_RNAseq_linear_results.csv")
+# specs <- c('Control_Fibroblasts_r1_midPhase_RNAseq',main_RNAseq_comparison,9,'Human','Primary_Cell_Culture',
+#            'Cellular_Lifespan','Fibroblasts','Transcriptomics','RNAseq','Control','Healthy','linearRegression',
+#            'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_midPhase_RNAseq_genes.RData',
+#            'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_midPhase_RNAseq_metadata.csv')
+# datasets <- addMetdata(ds,specs)
+# 
+# ds <- read.csv("Cellular_Lifespan/RNAseq/control_fibroblasts_r1_senescentPhase_RNAseq_linear_results.csv")
+# specs <- c('Control_Fibroblasts_r1_senescentPhase_RNAseq',main_RNAseq_comparison,11,'Human','Primary_Cell_Culture',
+#            'Cellular_Lifespan','Fibroblasts','Transcriptomics','RNAseq','Control','Healthy','linearRegression',
+#            'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_senescentPhase_RNAseq_genes.RData',
+#            'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_senescentPhase_RNAseq_metadata.csv')
+# datasets <- addMetdata(ds,specs)
 
 ds <- read.csv("Cellular_Lifespan/RNAseq/control_fibroblasts_r1_treatments_RNAseq_linear_results.csv")
 specs <- c('Control_Fibroblasts_r1_treatments_RNAseq',main_RNAseq_comparison,12,'Human','Primary_Cell_Culture',
@@ -4919,36 +5044,139 @@ specs <- c('2-Deoxyglucose_earlyPhase_Fibroblasts_RNAseq',main_RNAseq_comparison
 datasets <- addMetdata(ds,specs)
 
 GTExfiles <- read.csv("GTEx/GTEx_TissueFile_linear_metadata.csv",header=T)
-for(i in 1:nrow(GTExfiles)) {
-  tissue <- GTExfiles$Tissue[i]
-  if(is.na(tissue)) {next}
-  filename <- GTExfiles$filename[i]
-  datafilename <- GTExfiles$datafilename[i]
-  metadatafilename <- GTExfiles$metadatafilename[i]
-  modelType <- GTExfiles$model[i]
-  nSamples <- GTExfiles$nSamples[i]
-  comparison <- 'Control_Fibroblasts_r1_RNAseq_linearRegression'
-  if(tissue == 'Skin - Sun Exposed (Lower leg)' | tissue == 'Cells - Transformed fibroblasts') {
-    comparison <- "all"
-  }
-  ds <- read.csv(filename)
-  dataset_name <- paste0('GTEx_',tissue,'_RNAseq') #  
-  specs <- c(dataset_name,comparison,nSamples,'Human','PostMortem','GTEx',tissue,'Transcriptomics','RNAseq','Control','Healthy',modelType,datafilename,metadatafilename)
-  datasets <- addMetdata(ds,specs)
-}
+GTExfile <- GTExfiles[GTExfiles$Tissue == "Skin - Sun Exposed (Lower leg)",]
+GTExfile <- GTExfile[2,]
+tissue <- "Skin - Sun Exposed (Lower leg)"
+if(is.na(tissue)) {next}
+filename <- GTExfile$filename
+datafilename <- GTExfile$datafilename
+metadatafilename <- GTExfile$metadatafilename
+modelType <- GTExfile$model
+nSamples <- GTExfile$nSamples
+comparison <- 'all'
+ds <- read.csv(filename)
+dataset_name <- paste0('GTEx_',tissue,'_RNAseq') #
+specs <- c(dataset_name,comparison,nSamples,'Human','PostMortem','GTEx',tissue,'Transcriptomics','RNAseq','Control','Healthy',modelType,datafilename,metadatafilename)
+datasets <- addMetdata(ds,specs)
+
+# GTExfiles <- read.csv("GTEx/GTEx_TissueFile_linear_metadata.csv",header=T)
+# for(i in 1:nrow(GTExfiles)) {
+#   tissue <- GTExfiles$Tissue[i]
+#   if(is.na(tissue)) {next}
+#   filename <- GTExfiles$filename[i]
+#   datafilename <- GTExfiles$datafilename[i]
+#   metadatafilename <- GTExfiles$metadatafilename[i]
+#   modelType <- GTExfiles$model[i]
+#   nSamples <- GTExfiles$nSamples[i]
+#   comparison <- 'Control_Fibroblasts_r1_RNAseq_linearRegression'
+#   if(tissue == 'Skin - Sun Exposed (Lower leg)' | tissue == 'Cells - Transformed fibroblasts') {
+#     comparison <- "all"
+#   }
+#   ds <- read.csv(filename)
+#   dataset_name <- paste0('GTEx_',tissue,'_RNAseq') #  
+#   specs <- c(dataset_name,comparison,nSamples,'Human','PostMortem','GTEx',tissue,'Transcriptomics','RNAseq','Control','Healthy',modelType,datafilename,metadatafilename)
+#   datasets <- addMetdata(ds,specs)
+# }
+#############
+
+##### DNAm - models #####
+main_DNAm_comparison <- 'TwinsUK_Skin_DNAm_linearRegression'
+#main_DNAm_comparison <- 'TwinsUK_Skin_DNAm_permutation'
+ds <- read.csv("Cellular_Lifespan/DNAm/control_fibroblasts_r1_linear_results.csv")
+specs <- c('Control_Fibroblasts_r1_DNAm','all',38,'Human',
+           'Primary_Cell_Culture','Cellular_Lifespan','Fibroblasts',
+           'DNAmethylation','EPICarray','Control','Healthy','linearRegression',
+           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_betas.RData',
+           'Cellular_Lifespan/DNAm/Control_Fibroblasts_r1_metadata.csv')
+datasets <- addMetdata(ds,specs)
+
+ds <- read.csv("TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_linear_results.csv")
+specs <- c('TwinsUK_Skin_DNAm','all',322,'Human','Biopsy','TwinsUk',
+           'Skin','DNAmethylation','450karray','Control','Healthy','linearRegression',
+           'TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_betas.RData',
+           'TwinsUK/DNAm_Skin/DNAm_GEO_metadata.csv')
+datasets <- addMetdata(ds,specs)
+
+ds <- read.csv("TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_permutation_results.csv")
+specs <- c('TwinsUK_Skin_DNAm','all',322,'Human','Biopsy','TwinsUk',
+           'Skin','DNAmethylation','450karray','Control','Healthy','permutation',
+           'TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_betas.RData',
+           'TwinsUK/DNAm_Skin/DNAm_GEO_metadata.csv')
+datasets <- addMetdata(ds,specs)
+
+ds <- read.csv("TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_minmax_results.csv")
+specs <- c('TwinsUK_Skin_DNAm','all',322,'Human','Biopsy','TwinsUk',
+           'Skin','DNAmethylation','450karray','Control','Healthy','minMax',
+           'TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_betas.RData',
+           'TwinsUK/DNAm_Skin/DNAm_GEO_metadata.csv')
+datasets <- addMetdata(ds,specs)
+
+ds <- read.csv("TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_lmer_results.csv")
+specs <- c('TwinsUK_Skin_DNAm','all',322,'Human','Biopsy','TwinsUk',
+           'Skin','DNAmethylation','450karray','Control','Healthy','LMER',
+           'TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_betas.RData',
+           'TwinsUK/DNAm_Skin/DNAm_GEO_metadata.csv')
+datasets <- addMetdata(ds,specs)
+
+
+#########
+
+##### RNAseq - models #####
+main_RNAseq_comparison <- 'GTEx_Skin - Sun Exposed (Lower leg)_RNAseq_linearRegression'
+#main_RNAseq_comparison <- 'GTEx_Skin - Sun Exposed (Lower leg)_RNAseq_permutation'
+ds <- read.csv("Cellular_Lifespan/RNAseq/control_fibroblasts_r1_RNAseq_linear_results.csv")
+specs <- c('Control_Fibroblasts_r1_RNAseq','all',29,'Human','Primary_Cell_Culture',
+           'Cellular_Lifespan','Fibroblasts','Transcriptomics','RNAseq','Control','Healthy','linearRegression',
+           'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_RNAseq_genes.RData',
+           'Cellular_Lifespan/RNAseq/control_fibroblasts_r1_RNAseq_metadata.csv')
+datasets <- addMetdata(ds,specs)
+
+ds <- read.csv("GTEx/linear/GTExSkin - Sun Exposed (Lower leg)_RNAseq_linear_results.csv")
+specs <- c('GTEx_Skin_RNAseq','all',520,'Human','Biopsy',
+           'GTEx','Skin - Sun Exposed (Lower leg)','Transcriptomics','RNAseq','Control','Healthy','linear',
+           'GTEx/data/GTExSkin - Sun Exposed (Lower leg)_RNAseq_data.RData', 
+           'GTEx/metadata/GTEx_Skin - Sun Exposed (Lower leg)RNAseq_metadata.csv')
+datasets <- addMetdata(ds,specs)
+
+ds <- read.csv("GTEx/permutation/GTExSkin - Sun Exposed (Lower leg)_RNAseq_permutation_results.csv")
+specs <- c('GTEx_Skin_RNAseq','all',520,'Human','Biopsy',
+           'GTEx','Skin - Sun Exposed (Lower leg)','Transcriptomics','RNAseq','Control','Healthy','permutation',
+           'GTEx/data/GTExSkin - Sun Exposed (Lower leg)_RNAseq_data.RData', 
+           'GTEx/metadata/GTEx_Skin - Sun Exposed (Lower leg)RNAseq_metadata.csv')
+datasets <- addMetdata(ds,specs)
+
+
+ds <- read.csv("GTEx/minmax/GTExSkin - Sun Exposed (Lower leg)_RNAseq_minmax_results.csv")
+specs <- c('GTEx_Skin_RNAseq','all',520,'Human','Biopsy',
+           'GTEx','Skin - Sun Exposed (Lower leg)','Transcriptomics','RNAseq','Control','Healthy','minmax',
+           'GTEx/data/GTExSkin - Sun Exposed (Lower leg)_RNAseq_data.RData', 
+           'GTEx/metadata/GTEx_Skin - Sun Exposed (Lower leg)RNAseq_metadata.csv')
+datasets <- addMetdata(ds,specs)
+
+
+ds <- read.csv("GTEx/GTEx_lmer/GTExSkin - Sun Exposed (Lower leg)_RNAseq_GTEx_lmer_results.csv")
+specs <- c('GTEx_Skin_RNAseq','all',520,'Human','Biopsy',
+           'GTEx','Skin - Sun Exposed (Lower leg)','Transcriptomics','RNAseq','Control','Healthy','LMER',
+           'GTEx/data/GTExSkin - Sun Exposed (Lower leg)_RNAseq_data.RData', 
+           'GTEx/metadata/GTEx_Skin - Sun Exposed (Lower leg)RNAseq_metadata.csv')
+datasets <- addMetdata(ds,specs)
 #############
 
 ###### Compare Datasets #######
 setwd(baseDir)
 cutoff <- 0.1
 minMolecules <- 2000
-plotGraphs <- F
+plotGraphs <- T
 GAMrestrict <- F
-SIGrestrict <- F
-rescaling_results_filename <- "rescaling_results/summary_6_indNonSig.csv"
+SIGrestrict <- T
+txt_size <- 6
+color1 <- "dodgerblue4"
+color2 <- "lightsalmon4"
+rescaling_results_filename <- "rescaling_results/summary_model_comparisons_examples_for_paper.csv"
 
 # Main Graphing Function
 rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG) {
+  #######
   colnames(dataset2) <- colnames(dataset1)
   dataset1 <- dataset1[order(dataset1$fdr),]
   dataset2 <- dataset2[order(dataset2$fdr),]
@@ -4970,13 +5198,13 @@ rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG)
   if(GAM == T) {
     GAM_control_results <- matrix()
     if(dataset1$Assay[1] == "DNAmethylation") {
-      setwd("/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Robert_Analysis/")
+      setwd("/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Robert_Analysis/")
       GAM_control_results <- read.csv("DNAm_GAM_sig_sites_3controls.csv")
     }
     else if(dataset1$Assay[1] == "Transcriptomics") {
-      genewizDir <- "/Users/gabrielsturm/NYSPI G-Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+      genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
       setwd(genewizDir)
-      GAM_control_results <- read.csv("RNAseq_GAM_sig_sites_3controls.csv")
+      GAM_control_results <- read.csv("RNAseq_GAM_sig_sites_3controls_vst.csv")
     }
     setwd(baseDir)
     ### filter to GAM sig sites
@@ -5043,17 +5271,18 @@ rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG)
     geom_text(aes(label=signif(dataset1_median,2),y=0,x=dataset1_median), vjust=-1,col='red',size=5)+
     geom_vline(xintercept = dataset2_median, color = "red", linetype = "dashed") +
     geom_text(aes(label=signif(dataset2_median,2),y=0,x=dataset2_median), vjust=-1,col='red',size=5)+
-    geom_text(aes(label=paste0("Slope Fold Change: ",signif(median_fc,3)),y=0,x=fc_pos), vjust=-10,col='red',size=5)+
+    #geom_text(aes(label=paste0("Slope Fold Change: ",signif(median_fc,3)),y=0,x=fc_pos), vjust=-10,col='red',size=5)+
     # 
-    scale_fill_manual(values=c("green", "purple")) +
-    scale_color_manual(values=c("green", "purple")) +
+    scale_fill_manual(values=c(color2, color1)) +
+    scale_color_manual(values=c(color2, color1)) +
     scale_x_log10(name = "Slope (log10, fdr<=0.05)") + # limits=c(-20,0)
     scale_y_continuous(name = "Density") +
     ggtitle(label= paste0("Distribution of slopes (all significant ",molecule,")")) +
     coord_cartesian(clip = 'off') + 
-    theme_classic(base_size = 16) +
+    theme_classic(base_size = txt_size+2) +
     theme(axis.line = element_line(colour = 'black', size = 0.5),
-          plot.title = element_text(size = 12, face = "bold"))
+          legend.position='bottom',
+          plot.title = element_text(size = txt_size, face = "bold"))
   #print(Slope_distribution)
   
   ### Breakdown of sig molecules
@@ -5088,16 +5317,17 @@ rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG)
     geom_text(aes(label=signif(dataset1_overlap_median,2),y=0,x=dataset1_overlap_median), vjust=-1,col='red',size=5)+
     geom_vline(xintercept = dataset2_overlap_median, color = "red", linetype = "dashed") +
     geom_text(aes(label=signif(dataset2_overlap_median,2),y=0,x=dataset2_overlap_median), vjust=-1,col='red',size=5)+
-    geom_text(aes(label=paste0("Slope Fold Change: ",signif(median_overlap_fc,3)),y=0,x=fc_pos), vjust=-10,col='red',size=5)+
-    scale_fill_manual(values=c("green", "purple")) +
-    scale_color_manual(values=c("green", "purple")) +
+    #geom_text(aes(label=paste0("Slope Fold Change: ",signif(median_overlap_fc,3)),y=0,x=fc_pos), vjust=-10,col='red',size=5)+
+    scale_fill_manual(values=c(color2,color1)) +
+    scale_color_manual(values=c(color2,color1)) +
     scale_x_log10(name = "Slope (log10, fdr<=0.05)") + # limits=c(-20,0)
     scale_y_continuous(name = "Density") +
     ggtitle(label= "Distribution of overlapping slopes (both directions)") +
     coord_cartesian(clip = 'off') + 
-    theme_classic(base_size = 16) +
+    theme_classic(base_size = txt_size+2) +
     theme(axis.line = element_line(colour = 'black', size = 0.5),
-          plot.title = element_text(size = 12, face = "bold"))
+          legend.position='bottom',
+          plot.title = element_text(size = txt_size, face = "bold"))
   
   study <- factor(c(study1,study2, "Total",study1,study2, "Total",study1,study2, "Total"), levels = c(study1,study2, "Total"))
   total_genes <- c(nrow(dataset1_sig), nrow(dataset2_sig), nrow(overlap_data)) 
@@ -5121,11 +5351,12 @@ rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG)
   sig_genes_barplot <- ggplot(totaldata, aes(x = study, y=genes, fill = label)) +
     geom_bar(stat="identity", colour="black") +
     scale_fill_manual(values =c('darkred','darkgray','darkblue')) + 
-    geom_text(aes(label=genes), size=3.5,color="white",position = position_stack(vjust = 0.5)) + 
+    geom_text(aes(label=genes), size=txt_size-2,color="white",position = position_stack(vjust = 0.5)) + 
     ggtitle(label= paste("Breakdown of significant ",molecule)) +
-    theme_classic(base_size = 16) +
+    theme_classic(base_size = txt_size+2) +
     theme(axis.line = element_line(colour = 'black', size = 0.5),
-          plot.title = element_text(size = 12, face = "bold"))
+          #legend.position='bottom',
+          plot.title = element_text(size = txt_size, face = "bold"))
   print("hist...")
   pos_mode <- median(overlap_data[overlap_data$rescaling_factor > 0,]$rescaling_factor,na.rm=T)
   print(pos_mode)
@@ -5147,9 +5378,10 @@ rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG)
     scale_x_continuous(name = "Rescaling Factor",limits=c(minx,maxx)) + # limits=c(-20,0)
     scale_y_continuous(name = "Density") + # limits=c(-2000,2000)
     ggtitle(label= "Distribution of Rescaling Factor (fdr<0.05)") +
-    theme_classic(base_size = 16) +
+    theme_classic(base_size = txt_size+2) +
     theme(axis.line = element_line(colour = 'black', size = 0.5),
-          plot.title = element_text(size = 12, face = "bold"))
+          legend.position='bottom',
+          plot.title = element_text(size = txt_size, face = "bold"))
   Rescaling_factor_hist
   
   print("hist2...")
@@ -5161,15 +5393,16 @@ rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG)
     geom_density(alpha = .2, fill = "antiquewhite3") + 
     geom_vline(xintercept = median_abs_rf, color = "red", linetype = "dashed") +
     geom_text(aes(label=signif(median_abs_rf,2),y=0,x=median_abs_rf),
-              vjust=-7,col='red',size=5)+
+              vjust=-7,col='red',size=txt_size-2)+
     #scale_fill_manual(values=c("green", "purple")) +
     #scale_color_manual(values=c("green", "purple")) +
     scale_x_continuous(name = "Rescaling Factor (abs)",limits=c(minx,maxx)) + # limits=c(-20,0)
     scale_y_continuous(name = "Density") + # limits=c(-2000,2000)
     ggtitle(label= "Distribution of Rescaling Factor (fdr<0.05), absolute value of slopes") +
-    theme_classic(base_size = 16) +
+    theme_classic(base_size = txt_size+2) +
     theme(axis.line = element_line(colour = 'black', size = 0.5),
-          plot.title = element_text(size = 12, face = "bold"))
+          legend.position='bottom',
+          plot.title = element_text(size = txt_size, face = "bold"))
   Rescaling_factor_hist_abs
   
   print("hist3...")
@@ -5183,15 +5416,16 @@ rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG)
     geom_density(alpha = .2, fill = "antiquewhite3") + 
     geom_vline(xintercept = log2_median_rf, color = "red", linetype = "dashed") +
     geom_text(aes(label=paste0(signif(log2_median_rf,2),'\n',signif(median_rf,2)),y=0,x=log2_median_rf),
-              vjust=-7,col='red',size=5)+
+              vjust=-7,col='red',size=txt_size-2)+
     #scale_fill_manual(values=c("green", "purple")) +
     #scale_color_manual(values=c("green", "purple")) +
     scale_x_continuous(name = "Rescaling Factor (log2)",limits=c(minx,maxx)) + # limits=c(-20,0)
     scale_y_continuous(name = "Density") + # limits=c(-2000,2000)
     ggtitle(label= "Distribution of Rescaling Factor (fdr<0.05), only same direction slopes") +
-    theme_classic(base_size = 16) +
+    theme_classic(base_size = txt_size+2) +
     theme(axis.line = element_line(colour = 'black', size = 0.5),
-          plot.title = element_text(size = 12, face = "bold"))
+          legend.position='bottom',
+          plot.title = element_text(size = txt_size, face = "bold"))
   Rescaling_factor_hist_sd
   
   ### Distribution of overlapping slopes in the same direction
@@ -5210,35 +5444,39 @@ rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG)
     geom_histogram(aes(y=..density..),alpha=1, position ="identity", binwidth = 0.01, size=0.3) + # 
     geom_density(alpha = .2, fill = "antiquewhite3") + 
     geom_vline(xintercept = dataset1_overlap_sd_median, color = "red", linetype = "dashed") +
-    geom_text(aes(label=signif(dataset1_overlap_sd_median,2),y=0,x=dataset1_overlap_sd_median), vjust=-1,col='red',size=5)+
+    geom_text(aes(label=signif(dataset1_overlap_sd_median,2),y=0,x=dataset1_overlap_sd_median), vjust=-1,col='red',size=txt_size-2)+
     geom_vline(xintercept = dataset2_overlap_sd_median, color = "red", linetype = "dashed") +
-    geom_text(aes(label=signif(dataset2_overlap_sd_median,2),y=0,x=dataset2_overlap_sd_median), vjust=-1,col='red',size=5)+
-    geom_text(aes(label=paste0("Slope Fold Change: ",signif(median_overlap_sd_fc,3)),y=0,x=fc_pos), vjust=-10,col='red',size=5)+
-    scale_fill_manual(values=c("green", "purple")) +
-    scale_color_manual(values=c("green", "purple")) +
+    geom_text(aes(label=signif(dataset2_overlap_sd_median,2),y=0,x=dataset2_overlap_sd_median), vjust=-1,col='red',size=txt_size-2)+
+    #geom_text(aes(label=paste0("Slope Fold Change: ",signif(median_overlap_sd_fc,3)),y=0,x=fc_pos), vjust=-10,col='red',size=txt_size-2)+
+    scale_fill_manual(values=c(color2,color1)) +
+    scale_color_manual(values=c(color2,color1)) +
     scale_x_log10(name = "Slope (log10, fdr<=0.05)") + # limits=c(-20,0)
     scale_y_continuous(name = "Density") +
     ggtitle(label= "Distribution of overlapping slopes (same direction)") +
     coord_cartesian(clip = 'off') + 
-    theme_classic(base_size = 16) +
+    theme_classic(base_size = txt_size+2) +
     theme(axis.line = element_line(colour = 'black', size = 0.5),
-          plot.title = element_text(size = 12, face = "bold"))
+          legend.position='bottom',
+          plot.title = element_text(size = txt_size, face = "bold"))
   
   print("Scatterplot...")
   Slopes_scatter <- ggplot(overlap_data_sd, aes(x=slope, y = slope.1)) +
     geom_point(size = 1, alpha = 0.5) +
-    theme_classic(base_size = 20) +
+    theme_classic(base_size = txt_size+2) +
     geom_vline(xintercept = 0) +
     geom_hline(yintercept = 0) +
     scale_x_continuous(name=paste0(study1," slope (delta/year)")) +
     scale_y_continuous(name=paste0(study2, " slope (delta/year)")) +
     ggtitle(label= "Scatterplot of slopes, same direction") +
+    theme_classic(base_size = txt_size+2) +
     theme(axis.line = element_line(colour = 'black', size = 0.2),
-          plot.title = element_text(size = 12, face = "bold"))
+          legend.position='bottom',
+          plot.title = element_text(size = txt_size, face = "bold"))
  
   overlap_data_sd <- overlap_data_sd[order(overlap_data_sd$combined_delta_pvalue,decreasing=T),]
   data_filename <- paste0("rescaling_results/data/",study1,"_",study2,"overlap_sd.csv")
   write.csv(overlap_data_sd, data_filename)
+  #######
   print('timecourses...')
   if(graphPlots == T) {
     # Plot top 10 sites
@@ -5295,6 +5533,7 @@ rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG)
       subjects2 <- metadata2$Cell_Line
     }
     subjects = c(subjects1,subjects2)
+    
     plot_top_sites_ctrl <- function(overlap_data_sd,betas1,betas2,metadata1,metadata2,timepoints,subjects,n_sites) {
       model1 <- overlap_data_sd$model[1]
       model2 <- overlap_data_sd$model.1[1]
@@ -5305,7 +5544,7 @@ rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG)
         molecule_data1 <- betas1[rownames(betas1) == Molecule,]
         molecule_data2 <- betas2[rownames(betas2) == Molecule,]
         molecule_data <- c(molecule_data1,molecule_data2)
-        studyID<-c(rep(study1,length(molecule_data1)),rep(study2,length(molecule_data2)))
+        studyID<- factor(c(rep(study1,length(molecule_data1)),rep(study2,length(molecule_data2))),levels=c(study2,study1))
         Site_Data <- data.frame(molecule_data, studyID, subjects, timepoints)
         yintercept1 <- signif(overlap_data_sd$intercept[i],2)
         yintercept2 <- signif(overlap_data_sd$intercept.1[i],2)
@@ -5318,20 +5557,23 @@ rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG)
         anno <- paste0('\n ',study1,'\n slope: ',slope1,' intercept: ',yintercept1,' pValue: ',pValue1,' r2: ',r21,
                        '\n',study2,'\n slope: ',slope2,' intercept: ',yintercept2,' pValue: ',pValue2,' r2: ',r22)
         p <- ggplot(Site_Data, aes(x=timepoints, y = molecule_data, color = studyID)) +
-          geom_point(size = 2 , stroke = 1, aes(fill = studyID, shape = subjects)) +
-          geom_abline(intercept = yintercept1, slope = slope1, color="green", size=1)+
-          geom_abline(intercept = yintercept2, slope = slope2, color="purple", size=1)+
+          geom_point(size = 2 , alpha =0.5, stroke = 0.5, aes(fill = studyID, shape = subjects)) +
           #annotate(geom="text", x=0, y=1, label=anno, color="black") +
-          scale_color_manual(values = c("green", "purple")) +
-          scale_fill_manual(values =  c("green","purple")) +
+          scale_color_manual(values = c(color2,color1)) +
+          scale_fill_manual(values =  c(color2,color1)) +
+          scale_shape_manual(values=c(21,22,23,21)) +
           #scale_shape_manual(values=c(21,22,23,21)) +
           scale_y_continuous(name = Molecule) +
           scale_x_continuous(name = "Age (years)") + 
-          theme_classic() +
+          theme_classic(base_size = txt_size+3) +
           ggtitle(label= paste(Molecule, " #",i,anno,sep="")) +
           coord_cartesian(clip = "off") +
-          theme(legend.position='bottom') +
-          facet_grid(cols = vars(studyID),scales = "free")
+          facet_grid(cols = vars(studyID),scales="free") +
+          theme(legend.position='none', plot.title = element_text(size = txt_size-1),
+                strip.text.x = element_text(size = txt_size-3)) +
+          #geom_vline(data = data.frame(xint=1,z="b"), aes(xintercept = xint), linetype = "dotted") +
+          geom_abline(data = subset(Site_Data, studyID == study1),aes(intercept = yintercept1, slope = slope1), color=color1, size=1)+
+          geom_abline(data = subset(Site_Data, studyID == study2),aes(intercept = yintercept2, slope = slope2), color=color2, size=1)
         # if(Log == T) {
         #   p = p + scale_x_log10(name = "Log10 Age (years)")
         # }
@@ -5380,10 +5622,10 @@ rescale_function <- function(dataset1, dataset2, filename, graphPlots, GAM, SIG)
     print("Graphing...")
     ### Save Graphs
     setwd(baseDir)
-    pdf(filename)
-    grid.table(Table, rows = rownames(Table),theme=ttheme_default(base_size = 6))
+    pdf(filename, width=3,height=2.5)
+    grid.table(Table, rows = rownames(Table),theme=ttheme_default(base_size = txt_size-4))
     grid.newpage()
-    grid.table(Table2, rows = names(Table2),theme=ttheme_default(base_size = 6))
+    grid.table(Table2, rows = names(Table2),theme=ttheme_default(base_size = txt_size-4))
     #grid.newpage()
     print(sig_genes_barplot)
     print(Slope_distribution)
@@ -5511,4 +5753,157 @@ pdf('rescaling_results/summary_sampleSize.pdf', width=6,height=6)
 sampleSizePlot
 dev.off()
 ###############
-  
+
+
+### Graph of slopes for treatments ####
+#get slopes of each condition
+RNAseq_treatment_slopes_df <- data.frame(matrix(ncol=2,nrow=0))
+DNAm_treatment_slopes_df <- data.frame(matrix(ncol=2,nrow=0))
+for(i in 1:length(datasets)) {
+  print(i)
+  dataset <- datasets[[i]]
+  print(dataset$Dataset[i])
+  dataset <- dataset[order(dataset$fdr),]
+  GAM_control_results <- matrix()
+  if(dataset$Assay[1] == "DNAmethylation") {
+    setwd("/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/DNA Methylation/Part 2/Robert_Analysis/")
+    GAM_control_results <- read.csv("DNAm_GAM_sig_sites_3controls.csv")
+    dataset_sig <- dataset[dataset$molecule %in% GAM_control_results$X,]
+    
+    # limit to molecules in in-vivo dataset same direction
+    setwd(baseDir)
+    invivo_dataset <- read.csv("TwinsUK/DNAm_Skin/twinsUK_Skin_DNAm_linear_results.csv")
+    invivo_dataset_sig <- invivo_dataset[invivo_dataset$fdr <= cutoff,]
+    invivo_dataset_sig_overlap <- invivo_dataset_sig[invivo_dataset_sig$molecule %in% dataset_sig$molecule,]
+    dataset_sig_overlap <- dataset_sig[dataset_sig$molecule %in% invivo_dataset_sig_overlap$molecule,]
+    dataset_sig_overlap <- dataset_sig_overlap[match(invivo_dataset_sig_overlap$molecule,dataset_sig_overlap$molecule),]
+    invivo_dataset_sig_overlap_bd <- invivo_dataset_sig_overlap[sign(invivo_dataset_sig_overlap$slope) == sign(dataset_sig_overlap$slope),]
+    dim(invivo_dataset_sig_overlap_bd)
+    dataset_sig_overlap_bd <- dataset_sig_overlap[sign(dataset_sig_overlap$slope) == sign(invivo_dataset_sig_overlap$slope),]
+    dim(dataset_sig_overlap_bd)
+    
+    #add to main dataframe
+    label <- dataset$Dataset[1]
+    if(grepl( "Control", label, fixed = TRUE)) {
+      label <- "Control"
+    }
+    labels <- rep(label,nrow(dataset_sig_overlap_bd))
+    data <- data.frame(dataset_sig_overlap_bd$slope,labels)
+    DNAm_treatment_slopes_df <- rbind(DNAm_treatment_slopes_df, data)
+  }
+  else if(dataset$Assay[1] == "Transcriptomics") {
+    genewizDir <- "/Volumes/GoogleDrive-109084340135485397322/My Drive/MitoLab - General/ Members Folders/Gabriel Sturm/Projects/Project 2- Cell Lifespan Aging/RNA/RNAseq/Genewiz/"
+    setwd(genewizDir)
+    GAM_control_results <- read.csv("RNAseq_GAM_sig_sites_3controls.csv")
+    dataset_sig <- dataset[dataset$molecule %in% GAM_control_results$X,]
+    
+    # limit to molecules in in-vivo dataset same direction
+    setwd(baseDir)
+    invivo_dataset <- read.csv("GTEx/linear/GTExSkin - Sun Exposed (Lower leg)_RNAseq_linear_results.csv")
+    invivo_dataset_sig <- invivo_dataset[invivo_dataset$fdr <= cutoff,]
+    invivo_dataset_sig_overlap <- invivo_dataset_sig[invivo_dataset_sig$molecule %in% dataset_sig$molecule,]
+    dataset_sig_overlap <- dataset_sig[dataset_sig$molecule %in% invivo_dataset_sig_overlap$molecule,]
+    dataset_sig_overlap <- dataset_sig_overlap[match(invivo_dataset_sig_overlap$molecule,dataset_sig_overlap$molecule),]
+    invivo_dataset_sig_overlap_bd <- invivo_dataset_sig_overlap[sign(invivo_dataset_sig_overlap$slope) == sign(dataset_sig_overlap$slope),]
+    dim(invivo_dataset_sig_overlap_bd)
+    dataset_sig_overlap_bd <- dataset_sig_overlap[sign(dataset_sig_overlap$slope) == sign(invivo_dataset_sig_overlap$slope),]
+    dim(dataset_sig_overlap_bd)
+    
+    # add to main data frame
+    label <- dataset$Dataset[1]
+    if(grepl( "Control", label, fixed = TRUE)) {
+      label <- "Control"
+    }
+    labels <- rep(label,nrow(dataset_sig_overlap_bd))
+    data <- data.frame(dataset_sig_overlap_bd$slope,labels)
+    RNAseq_treatment_slopes_df <- rbind(RNAseq_treatment_slopes_df, data) 
+  }
+}
+
+# DNAm Distribution
+colnames(DNAm_treatment_slopes_df) <- c("slope","dataset")
+#treatments_of_interest <- c("Control","CI","DEX","SURF1","2DG","mitoNUITs","Oligo")
+colors <- c("darkgray","yellow","red","darkblue","darkgreen","purple","orange")
+treatments_of_interest <- unique(DNAm_treatment_slopes_df$dataset)
+DNAm_treatment_slopes_df$dataset <- factor(DNAm_treatment_slopes_df$dataset,level=unique(DNAm_treatment_slopes_df$dataset))
+dim(DNAm_treatment_slopes_df)
+head(DNAm_treatment_slopes_df)
+DNAm_medians <- vector(mode="numeric",length=length(treatments_of_interest))
+names(DNAm_medians) <- treatments_of_interest
+for(i in 1:length(treatments_of_interest)) {
+  #print(i)
+  treatment <- as.character(treatments_of_interest)[i]
+  subset <- DNAm_treatment_slopes_df[as.character(DNAm_treatment_slopes_df$dataset) == treatment,]
+  #print(median(as.numeric(subset$slope),na.rm=T))
+  DNAm_medians[i] <- median(abs(as.numeric(subset$slope)),na.rm=T)
+}
+DNAm_medians
+txt_size = 12
+DNAm_slope_distribution <- ggplot(data=DNAm_treatment_slopes_df, aes(x=abs(slope), color=dataset,fill=dataset)) +
+  #geom_histogram(aes(y=..density..),alpha=1, position ="identity", binwidth = 0.1, size=0.3) + # 
+  geom_density(alpha = .2) + 
+  geom_vline(xintercept = DNAm_medians[1], color = "darkgray", linetype = "dashed") +
+  geom_text(aes(label=signif(DNAm_medians[1],2),y=1.5,x=DNAm_medians[1]), vjust=-1,col='darkgray')+
+  #geom_vline(xintercept = dataset2_median, color = "red", linetype = "dashed") +
+  #geom_text(aes(label=signif(dataset2_median,2),y=0,x=dataset2_median), vjust=-1,col='red',size=5)+
+  #geom_text(aes(label=paste0("Slope Fold Change: ",signif(median_fc,3)),y=0,x=fc_pos), vjust=-10,col='red',size=5)+
+  # 
+  scale_fill_manual(values=colors) +
+  scale_color_manual(values=colors) +
+  scale_x_log10(name = "Slope") + # limits=c(-20,0)
+  scale_y_continuous(name = "Density") +
+  ggtitle(label= paste0("DNAm")) +
+  coord_cartesian(clip = 'off') + 
+  theme_classic(base_size = txt_size) +
+  theme(axis.line = element_line(colour = 'black', size = 0.5),
+        plot.title = element_text(size = txt_size, face = "bold"),
+        legend.text = element_text(size = txt_size),
+        legend.position = "none")
+#DNAm_slope_distribution
+
+# RNAaeq Distribution
+colnames(RNAseq_treatment_slopes_df) <- c("slope","dataset")
+colors <- c("darkgray","yellow","red","darkblue","purple","darkgreen","orange")
+treatments_of_interest <- unique(RNAseq_treatment_slopes_df$dataset)
+RNAseq_treatment_slopes_df$dataset <- factor(RNAseq_treatment_slopes_df$dataset,level=unique(RNAseq_treatment_slopes_df$dataset))
+RNAseq_treatment_slopes_df$slope <- as.numeric(abs(RNAseq_treatment_slopes_df$slope))
+dim(RNAseq_treatment_slopes_df)
+head(RNAseq_treatment_slopes_df)
+RNAseq_medians <- vector(mode="numeric",length=length(treatments_of_interest))
+names(medians) <- treatments_of_interest
+for(i in 1:length(treatments_of_interest)) {
+  #print(i)
+  treatment <- as.character(treatments_of_interest)[i]
+  subset <- RNAseq_treatment_slopes_df[as.character(RNAseq_treatment_slopes_df$dataset) == treatment,]
+  #print(median(as.numeric(subset$slope),na.rm=T))
+  RNAseq_medians[i] <- median(abs(as.numeric(subset$slope)),na.rm=T)
+}
+RNAseq_medians
+txt_size = 12
+RNAseq_slope_distribution <- ggplot(data=RNAseq_treatment_slopes_df, aes(x=slope, color=dataset,fill=dataset)) +
+  #geom_histogram(aes(y=..density..),alpha=1, position ="identity", binwidth = 0.1, size=0.3) + # 
+  geom_density(alpha = .2) + 
+  geom_vline(xintercept = RNAseq_medians[1], color = "gray", linetype = "dashed") +
+  geom_text(aes(label=signif(RNAseq_medians[1],2),y=1.2,x= RNAseq_medians[1]), vjust=-1,col='gray')+
+  #geom_vline(xintercept = dataset2_median, color = "red", linetype = "dashed") +
+  #geom_text(aes(label=signif(dataset2_median,2),y=0,x=dataset2_median), vjust=-1,col='red',size=5)+
+  #geom_text(aes(label=paste0("Slope Fold Change: ",signif(median_fc,3)),y=0,x=fc_pos), vjust=-10,col='red',size=5)+
+  # 
+  scale_fill_manual(values=colors) +
+  scale_color_manual(values=colors) +
+  scale_x_log10(name = "Slope",limits=c(0.01,100)) + # limits=c(-20,0)
+  scale_y_continuous(name = "Density") +
+  ggtitle(label= paste0("RNAseq")) +
+  coord_cartesian(clip = 'off') + 
+  theme_classic(base_size = txt_size) +
+  theme(axis.line = element_line(colour = 'black', size = 0.5),
+        plot.title = element_text(size = txt_size, face = "bold"),
+        legend.text = element_text(size = txt_size-3),
+        legend.position = "none")
+#RNAseq_slope_distribution
+
+setwd(baseDir)
+pdf("Treatment_slope_distribution_graphs.pdf",width=2.75,height=2.5)
+plot(DNAm_slope_distribution)
+plot(RNAseq_slope_distribution)
+dev.off()

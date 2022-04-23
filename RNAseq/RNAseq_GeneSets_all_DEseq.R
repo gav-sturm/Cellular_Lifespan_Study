@@ -1,3 +1,13 @@
+#####################################
+##
+## Title: RNAseq pathway expression visualization across the cellular lifespan 
+## Author: Gabriel Sturm 
+## contact info: gs2934@cumc.columbia.edu
+## Date: 2020-01-01
+##
+##
+
+
 library(ggplot2)
 library(tidyverse)
 library(qlcMatrix)

@@ -1,3 +1,12 @@
+#####################################
+##
+## Title: RNAseq analysis of SURF1 mutant fibroblasts using linear mixed effects modeling
+## Author: Gabriel Sturm 
+## contact info: gs2934@cumc.columbia.edu
+## Date: 2020-01-01
+## see MinFi pipeline: https://www.rdocumentation.org/packages/lme4/versions/1.1-29/topics/lmer
+##
+##
 
 library(limma) 
 library(ggplot2)
