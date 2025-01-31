@@ -11,13 +11,15 @@ All data can be accessed and browsed at our webtool: [Shiny Data GUI](https://co
 
 ![Shiny WebApp](images/Fig6_sciData_lowres.jpg)
 
-For a more detailed explanation of the study design see our associated manuscript @ [Nature Scientific Data](https://www.nature.com/articles/s41597-022-01852-y)
+Detailed documetnation of the study design was published @[Nature Scientific Data](https://www.nature.com/articles/s41597-022-01852-y)
 
-Primary findings related to mitochondrial disease were published @ [Communciations Biology](https://www.nature.com/articles/s42003-022-04303-x)
-Primary findings related to stress and dexamethasone were published @ [Psychoneuroendocrinology](https://www.sciencedirect.com/science/article/pii/S0306453023003001)
-Primary findings related to metabolic aging were published as a preprint @ [BioRxiv](https://www.biorxiv.org/content/10.1101/2022.05.10.491392v4)
+Primary findings related to mitochondrial disease were published @[Communciations Biology](https://www.nature.com/articles/s42003-022-04303-x)
+
+Primary findings related to stress and dexamethasone were published @[Psychoneuroendocrinology](https://www.sciencedirect.com/science/article/pii/S0306453023003001)
+
+Primary findings related to metabolic aging were published as a preprint @[BioRxiv](https://www.biorxiv.org/content/10.1101/2022.05.10.491392v4)
 
 
-Datasets include: [GEO SuperSeries, GSE179849](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE179849), [DNA methylation, GSE179847](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE179847), and [RNAseq, GSE179848](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE179848)
+Datasets include: [GEO SuperSeries GSE179849](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE179849), [DNA methylation GSE179847](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE179847), [RNAseq GSE179848](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE179848)
 
 Learn more about our lab here: [http://www.picardlab.org/](http://www.picardlab.org/)
